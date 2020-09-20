@@ -34,6 +34,11 @@ public class JobCategory {
         }
     }
 
+    public void testMethod(String test)
+    {
+        System.out.print(test);
+    }
+
     public Boolean validateCategory(String categoryName)
     {
         return categoryList.containsValue(categoryName);
