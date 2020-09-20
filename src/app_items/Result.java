@@ -8,7 +8,7 @@ public class Result {
 	
 	private ArrayList<Applicant> finalStudents;
 	private ArrayList<Applicant> rejectedStudents;
-	//Interview interview;
+	Interview interview;
 	
 	
 			//the successful applicant is removed from the list
@@ -54,13 +54,13 @@ public class Result {
 				this.rejectedStudents = rejectedStudents;
 			}
 
-//			public Interview getInterview() {
-//				return interview;
-//			}
-//
-//			public void setInterview(Interview interview) {
-//				this.interview = interview;
-//			}
+			public Interview getInterview() {
+				return interview;
+			}
+
+			public void setInterview(Interview interview) {
+				this.interview = interview;
+			}
 
 			public int getsize() 
 			{
