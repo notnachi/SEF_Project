@@ -1,18 +1,17 @@
 package app_users;
 
+import java.applet.AppletContext;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.StringTokenizer;
+import java.util.*;
 
 import app_exceptions.InvalidPasswordException;
 
 public class UserDatabase {
 	
-	private static HashMap<String,User> userData = new HashMap<>();
+	public static HashMap<String,User> userData = new HashMap<>();
 
 	
 	public UserDatabase()
@@ -86,31 +85,44 @@ public class UserDatabase {
 		
 		return staff;
 	}
-	
-	public void readApplicantFile() throws IOException
+
+	public static List<Applicant> getAllApplicants()
 	{
-		BufferedReader bufferRead = new BufferedReader(new FileReader("applicant.txt"));
-		
-		String studentInfo = "";
-		
-		while((studentInfo = bufferRead.readLine())!=null && !studentInfo.isBlank())
+		List<Applicant> applicantList = new ArrayList<>();
+		for(String userID : userData.keySet())
 		{
-			//first split the information on basis of semicolon to seperate the different fields
-			StringTokenizer infoSplit = new StringTokenizer(studentInfo,";");
-			
-			String username = infoSplit.nextToken();
-			String password = infoSplit.nextToken();
-			
-			String name = infoSplit.nextToken();
-			String contact = infoSplit.nextToken();
-			String nationality = infoSplit.nextToken();
-			
-			Applicant app = new Applicant(username, password, name, contact, nationality);
-			
-			//add user to hashmap
-			this.userData.put("username", app);
+			if(userData.get(userID) instanceof Applicant)
+			{
+				applicantList.add((Applicant) userData.get(userID));
+			}
 		}
+		return applicantList;
 	}
+	
+//	public void readApplicantFile() throws IOException
+//	{
+//		BufferedReader bufferRead = new BufferedReader(new FileReader("applicant.txt"));
+//
+//		String studentInfo = "";
+//
+//		while((studentInfo = bufferRead.readLine())!=null && !studentInfo.isBlank())
+//		{
+//			//first split the information on basis of semicolon to seperate the different fields
+//			StringTokenizer infoSplit = new StringTokenizer(studentInfo,";");
+//
+//			String username = infoSplit.nextToken();
+//			String password = infoSplit.nextToken();
+//
+//			String name = infoSplit.nextToken();
+//			String contact = infoSplit.nextToken();
+//			String nationality = infoSplit.nextToken();
+//
+//			Applicant app = new Applicant(username, password, name, contact, nationality);
+//
+//			//add user to hashmap
+//			this.userData.put("username", app);
+//		}
+//	}
 	
 	
 

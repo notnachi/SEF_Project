@@ -34,7 +34,7 @@ public class Registration_Dashboard {
 		System.out.print("Enter nationality ");
 		String nationality = scan.nextLine();
 		
-		this.userDB.addUsers(username, new Applicant(username, password, name, contact, nationality));
+		//this.userDB.addUsers(username, new Applicant(username, password, name, contact, nationality));
 		
 //		System.out.println("Is this user an instance of applicant" + (userDB.fetchUser(username) instanceof Applicant));
 	}

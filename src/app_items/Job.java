@@ -8,8 +8,12 @@ import app_users.Applicant;
 import app_users.Employer;
 
 public class Job{
-	
-	private String jobID;
+
+	//stores the unique id for the job
+	private final String jobID;
+
+	private static int jobCount;
+
 	//employer who is offering the job
 	private Employer emp;
 	//is job applicable for international students
@@ -27,216 +31,84 @@ public class Job{
 
 	private String jobType;
 	private double workingHours;
-	private JobCategory jobCategory;
+	private String jobCategory;
 	private boolean licenseRequired;
 	private double minYearsOfExperience;
 
-	
-	//job description
-	private String jobDesc;
 
-	//count the successful applicants
-	private int count;
+	//count of free spots available
+	private int noOfSpotsAvailable;
 	
 	//number of students required 
-	private int numberOfStudents;
+	private int noOfStudentsRequired;
 	
 	//job available or not
 	private boolean jobAvailable;
-	
-	//stores the list of finalized candidates along with interview times
-	private HashMap<Applicant, String> applicantInterviewTimes;
-	
-	
-	
-	Result result;
 
 
-	
+	public Job(Employer emp,
+			   boolean internationalApply,
+			   String jobType,
+			   double workingHours,
+			   String jobCategory,
+			   boolean licenseRequired,
+			   double minYearsOfExperience,
+			   int noOfStudentsRequired)
+	{
+		this.jobID = "J" + jobCount;
+		this.internationalApply = internationalApply;
+		this.jobType = jobType;
+		this.workingHours = workingHours;
+		this.jobCategory = jobCategory;
+		this.licenseRequired = licenseRequired;
+		this.minYearsOfExperience = minYearsOfExperience;
+		this.noOfStudentsRequired = noOfStudentsRequired;
 
-	@Override
-	public String toString() {
-		return "jobID=" + jobID + "\n"+
-				"emp=" + emp + "\n"+ 
-				"internationalApply=" + internationalApply +"\n"+
-				"jobRequirements=" + jobRequirements +"\n"+ 
-				"jobDesc=" + jobDesc +"\n"+
-				"count=" + count +"\n"+
-				"numberOfStudents=" + numberOfStudents +"\n"+
-				"jobAvailable=" + jobAvailable + "\n"+
-				"applicantInterviewTimes=" + applicantInterviewTimes +"\n"+
-				"result=" + result ;
+		this.jobAvailable = true;
+		this.noOfSpotsAvailable = noOfStudentsRequired;
+
+		jobCount+=1;
+
 	}
-	
-	public Result getResult() {
-		return result;
-	}
-
-
-	public void setResult(Result result) {
-		this.result = result;
-	}
-
 
 	public String getJobID() {
 		return jobID;
 	}
 
-
-	public void setJobID(String jobID) {
-		this.jobID = jobID;
-	}
-
-
-	public Employer getEmp() {
-		return emp;
-	}
-
-
-	public void setEmp(Employer emp) {
-		this.emp = emp;
-	}
-
-
 	public boolean isInternationalApply() {
 		return internationalApply;
 	}
 
-
-	public void setInternationalApply(boolean internationalApply) {
-		this.internationalApply = internationalApply;
+	public String getJobType() {
+		return jobType;
 	}
 
-
-//	public EmploymentRecord getJobRequirements() {
-//		return jobRequirements;
-//	}
-//
-//
-//	public void setJobRequirements(EmploymentRecord jobRequirements) {
-//		this.jobRequirements = jobRequirements;
-//	}
-
-
-	public String getJobDesc() {
-		return jobDesc;
+	public double getWorkingHours() {
+		return workingHours;
 	}
 
-
-	public void setJobDesc(String jobDesc) {
-		this.jobDesc = jobDesc;
+	public boolean isLicenseRequired() {
+		return licenseRequired;
 	}
 
-
-	public int getCount() {
-		return count;
+	public double getMinYearsOfExperience() {
+		return minYearsOfExperience;
 	}
 
-
-	public void setCount(int count) {
-		this.count = count;
+	public int getNoOfSpotsAvailable() {
+		return noOfSpotsAvailable;
 	}
 
-
-	public int getNumberOfStudents() {
-		return numberOfStudents;
+	public int getNoOfStudentsRequired() {
+		return noOfStudentsRequired;
 	}
-
-
-	public void setNumberOfStudents(int numberOfStudents) {
-		this.numberOfStudents = numberOfStudents;
-	}
-
 
 	public boolean isJobAvailable() {
 		return jobAvailable;
 	}
 
 
-	public void setJobAvailable(boolean jobAvailable) {
-		this.jobAvailable = jobAvailable;
-	}
 
-
-	public HashMap<Applicant, String> getApplicantInterviewTimes() {
-		return applicantInterviewTimes;
-	}
-
-
-	public void setApplicantInterviewTimes(HashMap<Applicant, String> applicantInterviewTimes) {
-		this.applicantInterviewTimes = applicantInterviewTimes;
-	}
-
-
-
-	public Job(String jobID, Employer emp, boolean internationalApply, Availability detail,int numberOfStudents )
-	{
-		this.jobID = jobID;
-		this.emp = emp;
-		this.internationalApply = internationalApply;
-		this.jobAvailable = true;
-		this.numberOfStudents = numberOfStudents;
-		
-
-		
-	}
-	
-	
-	
-	
-	public void jobOfferRejected(Applicant st)
-	{
-		
-		//the successful applicant is removed from the list
-		result.removeFinalStudent(st);
-		
-		// the rejected applicant is added from jobOfferAccepted method and appended in the list
-		result.addRejectedStudent(st);
-		
-		Applicant applicant;
-		
-//		Employer e1 = new Employer(jobDesc);
-		//rejectedStudents index would start with 0
-
-		applicant = result.index(0);
-		this.emp.sendJobOffers(this);
-		result.removeRejectedStudent(applicant);
-		
-		count--;
-		
-		/**
-		 * remove student from successful applicant and add to rejected applicant
-		 * (send the offer to the next student from the rejected stack)
-		 */
-	}
-	
-	public void jobOfferAccepted(Applicant st)
-	{
-		// declaring the instances for count and number of students 
-		int c = count;
-		int n = numberOfStudents;
-		
-		count++;
-		
-		
-		//finalStudents are added to the list
-		result.addFinalStudent(st);
-		
-		System.out.println("You are accepted for the job. ");
-		int i= result.getsize();
-		if (c == n && i == n)
-		{   
-			//checks if the size for finalStudents exceeds then jobAvailable becomes false 
-			
-			jobAvailable = false;	
-		}
-		
-	
-		/**
-		 * Change job availability
-		 * (add student to final student data structure)
-		 */
-    }
 }
 	
 	

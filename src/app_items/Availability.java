@@ -1,37 +1,31 @@
 package app_items;
 
-import java.util.*;
-
 public class Availability{
 	
-	private String type;
+	private String jobType;
 	
-	private HashMap<String, ArrayList<String>> period ;
+	private double availableWorkingHours;
 
 	
-	private ArrayList<String> jobCategories;
+	private String jobCategories;
 	
-	public Availability(String type, HashMap<String, ArrayList<String>> period, ArrayList<String> category)
+	public Availability(String jobType, double availableWorkingHours, String category)
 	{
-		this.type = type;
+		this.jobType = jobType;
 		this.jobCategories = category;
-		this.period = period;
+		this.availableWorkingHours = availableWorkingHours;
 	}
-	
-	public String getType()
-	{
-		return this.type;
-	}
-	
-	
-	public ArrayList<String> getCategoryList()
-	{
-		return this.jobCategories;
-	}                          
 
-	public HashMap<String, ArrayList<String>>  getperiod()
+	public String getJobType()
 	{
-		return period;
+		return this.jobType;
 	}
+
+	public double getAvailableWorkingHours()
+	{
+		return this.availableWorkingHours;
+	}
+
+
 
 }

@@ -4,6 +4,7 @@ import java.util.Scanner;
 
 import app_exceptions.CannotFullyBlacklistException;
 import app_exceptions.DuplicateCategoryException;
+import app_exceptions.InvalidAccessRightsException;
 import app_items.Blacklist;
 import app_items.JobCategory;
 
@@ -18,8 +19,7 @@ public class Maintainance extends User {
 		super(username,password);
 	}
 	
-	public void getApplicantRecords()
-	{
+	public void getApplicantRecords() {
 		Scanner scan = new Scanner(System.in);
 		System.out.println("*********List of Applicants*********");
 		for(String username : userDB.getUserData().keySet())
@@ -34,7 +34,7 @@ public class Maintainance extends User {
 		
 		Applicant app = (Applicant) userDB.fetchUser(username);
 		
-		app.showStudentProfile();
+		//app.showStudentProfile();
 	}
 	
 	public void getEmployerRecords()

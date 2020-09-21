@@ -120,7 +120,7 @@ public class AppMain {
 				try {
 					Applicant app = userDB.getApplicant(userID, password);
 					ApplicantDashboard appDash = new ApplicantDashboard(app);
-					appDash.displayMainMenu();
+					//appDash.displayMainMenu();
 				} 
 				catch (NullPointerException e) {
 					System.err.println("Username not found in database. Please try again");
@@ -133,7 +133,7 @@ public class AppMain {
 				try {
 					Employer emp = userDB.getEmployer(userID, password);
 					EmployerDashboard empDash = new EmployerDashboard(emp);
-					empDash.displayMainMenu();
+					//empDash.displayMainMenu();
 				} 
 				catch (NullPointerException e) {
 					System.err.println("Username not found in database. Please try again");

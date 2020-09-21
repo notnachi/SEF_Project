@@ -1,22 +1,20 @@
 package app_items;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 import app_users.Applicant;
 
 public class Interview {
-	ArrayList<Applicant> appList = new ArrayList<Applicant>();
 	Job job;
-	String interviewTime;
+	Date interviewTime;
 	
-	public ArrayList<Applicant> getAppList() {
-		return appList;
+	public Interview(Job job, Date interviewTime)
+	{
+		this.job = job;
+		this.interviewTime = interviewTime;
 	}
-	
-	public void setAppList(ArrayList<Applicant> appList) {
-		this.appList = appList;
-	}
-	
+
 	public Job getJob() {
 		return job;
 	}
@@ -25,11 +23,11 @@ public class Interview {
 		this.job = job;
 	}
 	
-	public String getInterviewTime() {
+	public Date getInterviewTime() {
 		return interviewTime;
 	}
 	
-	public void setInterviewTime(String interviewTime) {
+	public void setInterviewTime(Date interviewTime) {
 		this.interviewTime = interviewTime;
 	}
 }
