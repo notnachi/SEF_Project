@@ -4,38 +4,37 @@ import app_users.Applicant;
 import app_users.Employer;
 
 public class Offer {
-	Employer employer;
-	Job job;
-	Applicant applicantInfo;
-	
-	public Employer getEmployer() {
-		return employer;
-	}
-	
-	public void setEmployer(Employer employer) {
-		this.employer = employer;
-	}
-	
-	public Job getJob() {
-		return job;
-	}
-	
-	public void setJob(Job job) {
+
+	//job for which the offer is sent
+	private Job job;
+	//applicant to whom the offer is sent to
+	private Applicant applicant;
+	//status of the offer
+	private String offerStatus;
+
+	public Offer(Job job, Applicant applicant)
+	{
 		this.job = job;
+		this.applicant = applicant;
 	}
-	
-	public Applicant getApplicantInfo() {
-		return applicantInfo;
+
+	public String getOfferStatus()
+	{
+		return offerStatus;
 	}
-	
-	public void setApplicantInfo(Applicant applicantInfo) {
-		this.applicantInfo = applicantInfo;
-	}
-	
-	public Offer(Employer employer, Job job, Applicant applicantInfo) {
-		this.employer = employer;
-		this.job = job;
-		this.applicantInfo = applicantInfo;
+
+	public void updateOfferStatus(boolean acceptOffer)
+	{
+		if(acceptOffer)
+		{
+			this.offerStatus = "Job Offer Accepted";
+			applicant.setStatus("Employed");
+		}
+		else
+		{
+			this.offerStatus = "Job Offer Rejected";
+			applicant.setStatus("Available");
+		}
 	}
 	
 	

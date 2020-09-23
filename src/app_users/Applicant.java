@@ -175,6 +175,11 @@ public class Applicant extends User {
 		return this.status;
 	}
 
+	public void setStatus(String status)
+	{
+		this.status = status;
+	}
+
 	public int checkNationalityRequirement(Job job)
 	{
 		return Boolean.compare(job.isInternationalApply(), this.isInternational);
@@ -209,9 +214,24 @@ public class Applicant extends User {
 		this.availabilityList.put(newAvailability.getJobType(), newAvailability);
 	}
 
-	public boolean setInterviewTime(Date interviewDate)
+	public void addInterview(Interview interview)
 	{
-		return true;
+		/*
+		 * Before adding check whether the interview time clashes
+		 * with other interview objects in the interview list
+		 */
+		this.interviewList.add(interview);
+	}
+
+	public void receiveJobOffer(Offer jobOffer)
+	{
+		this.jobOffer = jobOffer;
+		this.setStatus("Pending");
+	}
+
+	public void acceptJobOffer(boolean acceptOffer)
+	{
+		this.jobOffer.updateOfferStatus(acceptOffer);
 	}
 
 

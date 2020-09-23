@@ -102,8 +102,29 @@ public class Employer extends User {
 	
 	public void shortlistApplicants(Job job)
 	{
-
+		/*
+		 * 1. Display the list of eligible candidates for the job
+		 * 2. Let employer choose the number of applicants and run a loop for that many times
+		 * 3. Enter the applicant ID
+		 * 4. Enter the interview time for that applicant
+		 * 5. Create an interview object. Add this object to the employer list and applicant list
+		 * 6. Add the applicant to a shortlisted applicant list in the job
+		 */
 	}
+
+	public void recordResult(Job job)
+	{
+		/*
+		 * 1. Display the list of shortlisted applicants
+		 * 2. Prompt the employer to enter the number of final applicant
+		 * 3. Prompt the employer to select the final applicant (check whether this applicant is still available)
+		 * 4. Add this applicant to the finalized list
+		 * 5. Send this applicant a job offer
+		 * 6. Add the remaining applicants to the rejected student list
+		 */
+	}
+
+
 
 	public List<Applicant> filerApplicantByJob(String jobID)
 	{
@@ -120,4 +141,6 @@ public class Employer extends User {
 
 		return filteredAppList;
 	}
+
+
 }

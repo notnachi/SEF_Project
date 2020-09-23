@@ -2,6 +2,7 @@ package app_items;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Stack;
 
 import app_users.Applicant;
@@ -24,7 +25,7 @@ public class Job{
 	 * New added variables -
 	 * 1. Job Type (String) part time, full time or internship
 	 * 2. Working hours (Double) - working hours that job requires
-	 * 3. Job Cateogory (JobCategory) - job category of the job
+	 * 3. Job Category (JobCategory) - job category of the job
 	 * 4. License Required (Boolean) - is license required or not
 	 * 5. minYearsOfExperience (double) - if min experience required
 	 */
@@ -38,9 +39,20 @@ public class Job{
 
 	//count of free spots available
 	private int noOfSpotsAvailable;
-	
-	//number of students required 
+
+	//number of students required
 	private int noOfStudentsRequired;
+
+	/*
+	 * Job should have a list of all shortlisted applicants
+	 */
+
+	private HashMap<String, Applicant> shortlistedApplicantList;
+
+	//store the list of final and rejected applicants
+	private Result jobResult;
+
+	private ArrayList<Offer> offerList;
 	
 	//job available or not
 	private boolean jobAvailable;
@@ -66,6 +78,10 @@ public class Job{
 
 		this.jobAvailable = true;
 		this.noOfSpotsAvailable = noOfStudentsRequired;
+
+		this.shortlistedApplicantList = new HashMap<>();
+		this.jobResult = new Result();
+		this.offerList = new ArrayList<>();
 
 		jobCount+=1;
 
@@ -105,6 +121,18 @@ public class Job{
 
 	public boolean isJobAvailable() {
 		return jobAvailable;
+	}
+
+	public void addShortlistedApplicant(Applicant applicant)
+	{
+		if(this.shortlistedApplicantList.containsKey(applicant.getUsername()))
+		{
+			//throw exception here
+		}
+		else
+		{
+			this.shortlistedApplicantList.put(applicant.getUsername(), applicant);
+		}
 	}
 
 

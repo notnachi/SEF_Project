@@ -45,8 +45,6 @@ public class EmployerTest {
     @Test
     public void filerApplicantByJob() {
 
-
-
        List<Applicant> applicantList =  emp1.filerApplicantByJob("J0");
 
        System.out.println(applicantList.size());
