@@ -56,81 +56,25 @@ public class Maintainance extends User {
 		//add the show profile functionality here
 	}
 	
-	public void removeProvisionalBlacklist() throws NullPointerException
+	public void removeProvisionalBlacklist(User user) throws NullPointerException
 	{
-		Scanner scan = new Scanner(System.in);
-		if(blacklist.showProvisionallyBlacklistedUser().size() == 0)
-		{
-			System.out.println("No users in provisional blacklist hashmap");
-		}
-		else
-		{
-			//display list of provisionally blacklisted users
-			System.out.println("*********List of Provisionally Blacklisted Users*********");
-			
-			for(String username : blacklist.showProvisionallyBlacklistedUser().keySet())
-			{
-				System.out.println(username);
-			}
-			
-			System.out.print("Enter usename to remove from provisional blacklist");
-			String username = scan.nextLine();
-			
-			blacklist.removeFromProvisionalBlacklist(username);
-		}
+		//first check if user is present in the provisional list
+
 	}
 		
-		public void removeFullyBlacklist()
-		{
-			Scanner scan = new Scanner(System.in);
-			if(blacklist.showFullyBlacklistedUser().size() == 0)
-			{
-				System.out.println("No users in fully blacklist hashmap");
-			}
-			else
-			{
-				//display list of provisionally blacklisted users
-				System.out.println("*********List of Fully Blacklisted Users*********");
-				
-				for(String username : blacklist.showFullyBlacklistedUser().keySet())
-				{
-					System.out.println(username); //in the future also display date when fully blacklisted
-				}
-				
-				System.out.print("Enter usename to remove from provisional blacklist");
-				String username = scan.nextLine();
-				
-				blacklist.removeFromFullyBlacklist(username);
-			}
-		}
-		
-		public void fullyBlacklistUser() throws CannotFullyBlacklistException
-		{
-			Scanner scan = new Scanner(System.in);
-			if(blacklist.showProvisionallyBlacklistedUser().size() == 0)
-			{
-				System.out.println("Provisional Blacklist hashmap is empty. Nobody to fully blacklist");
-			}
-			else
-			{
-				//display list of provisionally blacklisted users
-				System.out.println("*********List of Provisionally Blacklisted Users*********");
-				
-				for(String username : blacklist.showProvisionallyBlacklistedUser().keySet())
-				{
-					System.out.println(username); //in the future also display date when fully blacklisted
-				}
-				
-				System.out.print("Enter usename to fully blacklist");
-				String username = scan.nextLine();
-				
-				blacklist.fullyBlacklist(blacklist.showProvisionallyBlacklistedUser().get(username));
-			}
-		}
+	public void removeFullyBlacklist()
+	{
 
-		public void addJobCategory(String categoryName) throws DuplicateCategoryException
-		{
-			JobCategory newCategory = new JobCategory(categoryName);
-		}
+	}
+
+	public void fullyBlacklistUser() throws CannotFullyBlacklistException
+	{
+
+	}
+
+	public void addJobCategory(String categoryName) throws DuplicateCategoryException
+	{
+		JobCategory newCategory = new JobCategory(categoryName);
+	}
 	}
 

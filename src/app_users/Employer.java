@@ -21,6 +21,8 @@ public class Employer extends User {
 	private boolean isProvisionallyBlacklisted;
 
 	private boolean isFullyBlacklisted;
+
+	private Date fullyBlacklistDate;
 	
 	public Employer(String username, String password, String empName, String emailID, String contactNumber, String empDesc) {
 		
@@ -34,10 +36,38 @@ public class Employer extends User {
 
 		this.isFullyBlacklisted = false;
 		this.isProvisionallyBlacklisted = false;
+
+		this.fullyBlacklistDate = null;
+	}
+
+	public boolean getProvisionallyBlacklistStatus()
+	{
+		return this.isProvisionallyBlacklisted;
+	}
+
+	public boolean getFullyBlacklistStatus()
+	{
+		return  this.isFullyBlacklisted;
+	}
+
+	public void setFullyBlacklistDate(Date fullyBlacklistDate)
+	{
+		this.fullyBlacklistDate = fullyBlacklistDate;
+	}
+
+	public Date getFullyBlacklistDate()
+	{
+		return this.fullyBlacklistDate;
 	}
 	
-	public void sendComplaint() throws NullPointerException, InvalidComplaintHierarchyException
-	{
+	public void sendComplaint() throws NullPointerException, InvalidComplaintHierarchyException, UserAlreadyBlacklistedException, InvalidAccessRightsException {
+
+		//avoid accessing this method if user is blacklisted
+		if(this.getFullyBlacklistStatus() || this.getProvisionallyBlacklistStatus())
+		{
+			throw new InvalidAccessRightsException("You have been blacklisted. Cannot perform operation.");
+		}
+
 		UserDatabase userDB = new UserDatabase();
 		Scanner scan = new Scanner(System.in);
 		System.out.println("Enter username ");
@@ -49,12 +79,17 @@ public class Employer extends User {
 			throw new InvalidComplaintHierarchyException("Username is not of type Applicant");
 		}
 		Applicant app = (Applicant) userDB.fetchUser(username);
-		
+
+		if(app.getFullyBlacklistStatus() || app.getProvisionallyBlacklistStatus())
+		{
+			throw new UserAlreadyBlacklistedException("This user has already been blacklisted");
+		}
+
 		System.out.print("Enter your complaint ");
 		String complaintDesc = scan.nextLine();
-		
+
 		Complaint newComplaint = new Complaint(this,app, complaintDesc);
-		
+
 		app.getComplaint(newComplaint);
 	}
 	
@@ -120,6 +155,7 @@ public class Employer extends User {
 		 * 3. Prompt the employer to select the final applicant (check whether this applicant is still available)
 		 * 4. Add this applicant to the finalized list
 		 * 5. Send this applicant a job offer
+		 * 6. Add the offer to the offer list in the job class
 		 * 6. Add the remaining applicants to the rejected student list
 		 */
 	}

@@ -4,6 +4,7 @@ import java.util.*;
 
 import app_exceptions.InvalidAccessRightsException;
 import app_exceptions.InvalidComplaintHierarchyException;
+import app_exceptions.UserAlreadyBlacklistedException;
 import app_items.*;
 
 public class Applicant extends User {
@@ -59,6 +60,8 @@ public class Applicant extends User {
 	//arraylist of complaints
 	private ArrayList<Complaint> complaintList;
 
+	private Date fullyBlacklistDate;
+
 	/*********** Blacklist Related ***********/
 
 	private boolean isProvisionallyBlacklisted;
@@ -87,10 +90,39 @@ public class Applicant extends User {
 
 		this.isFullyBlacklisted = false;
 		this.isProvisionallyBlacklisted = false;
+
+		this.fullyBlacklistDate = null;
+
 	}
-	
-	public void sendComplaint() throws NullPointerException, InvalidComplaintHierarchyException
+	public boolean getProvisionallyBlacklistStatus()
 	{
+		return this.isProvisionallyBlacklisted;
+	}
+
+	public boolean getFullyBlacklistStatus()
+	{
+		return this.isFullyBlacklisted;
+	}
+
+	public void setFullyBlacklistDate(Date fullyBlacklistDate)
+	{
+		this.fullyBlacklistDate = fullyBlacklistDate;
+	}
+
+	public Date getFullyBlacklistDate()
+	{
+		return this.fullyBlacklistDate;
+	}
+
+	
+	public void sendComplaint() throws NullPointerException, InvalidComplaintHierarchyException, UserAlreadyBlacklistedException, InvalidAccessRightsException {
+
+		//avoid accessing this method if user is blacklisted
+		if(this.getFullyBlacklistStatus() || this.getProvisionallyBlacklistStatus())
+		{
+			throw new InvalidAccessRightsException("You have been blacklisted. Cannot perform operation.");
+		}
+
 		UserDatabase userDB = new UserDatabase();
 		Scanner scan = new Scanner(System.in);
 		System.out.println("Enter username ");
@@ -102,6 +134,11 @@ public class Applicant extends User {
 			throw new InvalidComplaintHierarchyException("Username is not of type Employer");
 		}
 		Employer emp = (Employer) userDB.fetchUser(username);
+
+		if(emp.getFullyBlacklistStatus() || emp.getProvisionallyBlacklistStatus())
+		{
+			throw new UserAlreadyBlacklistedException("This user has already been blacklisted");
+		}
 		
 		System.out.print("Enter your complaint ");
 		String complaintDesc = scan.nextLine();
@@ -119,8 +156,18 @@ public class Applicant extends User {
 		{
 			Blacklist newBlacklist = new Blacklist();
 			newBlacklist.provisionallyBlacklist(this);
-			this.isProvisionallyBlacklisted = true;
+			this.setProvisionallyBlacklistStatus(true);
 		}
+	}
+
+	public void setFullyBlacklistStatus(boolean isFullyBlacklisted)
+	{
+		this.isFullyBlacklisted = isFullyBlacklisted;
+	}
+
+	public void setProvisionallyBlacklistStatus(boolean isProvisionallyBlacklisted)
+	{
+		this.isProvisionallyBlacklisted = isProvisionallyBlacklisted;
 	}
 
 	public void showStudentProfile() throws InvalidAccessRightsException //Nachi edit - removed applicant argument from function

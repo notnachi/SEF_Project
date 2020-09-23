@@ -14,6 +14,7 @@ public class Blacklist {
 	{
 		this.provisionalBlacklistedUsers.put(user.getUsername(), user);
 	}
+
 	public void fullyBlacklist(User user) throws CannotFullyBlacklistException
 	{
 		//first verify that the user has been provisionally blacklisted
