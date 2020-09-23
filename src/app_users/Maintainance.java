@@ -5,6 +5,7 @@ import java.util.Scanner;
 import app_exceptions.CannotFullyBlacklistException;
 import app_exceptions.DuplicateCategoryException;
 import app_exceptions.InvalidAccessRightsException;
+import app_exceptions.UserNotPresentException;
 import app_items.Blacklist;
 import app_items.JobCategory;
 
@@ -56,9 +57,17 @@ public class Maintainance extends User {
 		//add the show profile functionality here
 	}
 	
-	public void removeProvisionalBlacklist(User user) throws NullPointerException
-	{
-		//first check if user is present in the provisional list
+	public void removeProvisionalBlacklist(User user) throws UserNotPresentException {
+		if(!blacklist.getProvisionallyBlacklistedUserList().containsKey(user.getUsername()))
+		{
+			throw new UserNotPresentException("User is not in provisionally blacklisted hashmap");
+		}
+		else
+		{
+			user.setProvisionallyBlacklistStatus(false);
+			user.clearAllComplaints();
+			blacklist.removeFromProvisionalBlacklist(user.getUsername());
+		}
 
 	}
 		

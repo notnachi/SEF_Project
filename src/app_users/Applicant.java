@@ -1,5 +1,6 @@
 package app_users;
 
+import java.time.LocalDateTime;
 import java.util.*;
 
 import app_exceptions.InvalidAccessRightsException;
@@ -60,7 +61,7 @@ public class Applicant extends User {
 	//arraylist of complaints
 	private ArrayList<Complaint> complaintList;
 
-	private Date fullyBlacklistDate;
+	private LocalDateTime fullyBlacklistDate;
 
 	/*********** Blacklist Related ***********/
 
@@ -94,81 +95,7 @@ public class Applicant extends User {
 		this.fullyBlacklistDate = null;
 
 	}
-	public boolean getProvisionallyBlacklistStatus()
-	{
-		return this.isProvisionallyBlacklisted;
-	}
 
-	public boolean getFullyBlacklistStatus()
-	{
-		return this.isFullyBlacklisted;
-	}
-
-	public void setFullyBlacklistDate(Date fullyBlacklistDate)
-	{
-		this.fullyBlacklistDate = fullyBlacklistDate;
-	}
-
-	public Date getFullyBlacklistDate()
-	{
-		return this.fullyBlacklistDate;
-	}
-
-	
-	public void sendComplaint() throws NullPointerException, InvalidComplaintHierarchyException, UserAlreadyBlacklistedException, InvalidAccessRightsException {
-
-		//avoid accessing this method if user is blacklisted
-		if(this.getFullyBlacklistStatus() || this.getProvisionallyBlacklistStatus())
-		{
-			throw new InvalidAccessRightsException("You have been blacklisted. Cannot perform operation.");
-		}
-
-		UserDatabase userDB = new UserDatabase();
-		Scanner scan = new Scanner(System.in);
-		System.out.println("Enter username ");
-		String username = scan.nextLine();
-		
-		//check if user is of an applicant type
-		if(!(userDB.fetchUser(username) instanceof Employer))
-		{
-			throw new InvalidComplaintHierarchyException("Username is not of type Employer");
-		}
-		Employer emp = (Employer) userDB.fetchUser(username);
-
-		if(emp.getFullyBlacklistStatus() || emp.getProvisionallyBlacklistStatus())
-		{
-			throw new UserAlreadyBlacklistedException("This user has already been blacklisted");
-		}
-		
-		System.out.print("Enter your complaint ");
-		String complaintDesc = scan.nextLine();
-		
-		Complaint newComplaint = new Complaint(this, emp, complaintDesc);
-		
-		emp.getComplaint(newComplaint);
-	}
-	
-	public void getComplaint(Complaint complaint)
-	{
-		this.complaintList.add(complaint);
-		
-		if(this.complaintList.size()==3)
-		{
-			Blacklist newBlacklist = new Blacklist();
-			newBlacklist.provisionallyBlacklist(this);
-			this.setProvisionallyBlacklistStatus(true);
-		}
-	}
-
-	public void setFullyBlacklistStatus(boolean isFullyBlacklisted)
-	{
-		this.isFullyBlacklisted = isFullyBlacklisted;
-	}
-
-	public void setProvisionallyBlacklistStatus(boolean isProvisionallyBlacklisted)
-	{
-		this.isProvisionallyBlacklisted = isProvisionallyBlacklisted;
-	}
 
 	public void showStudentProfile() throws InvalidAccessRightsException //Nachi edit - removed applicant argument from function
 	{

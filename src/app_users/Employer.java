@@ -2,6 +2,7 @@ package app_users;
 import app_exceptions.*;
 import app_items.*;
 
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -14,15 +15,7 @@ public class Employer extends User {
 	
 	private HashMap<String, Job> jobList = new HashMap<>();
 	private ArrayList<Interview> interviewList = new ArrayList<Interview>();
-	
-	//arraylist of complaints
-	private ArrayList<Complaint> complaintList;
 
-	private boolean isProvisionallyBlacklisted;
-
-	private boolean isFullyBlacklisted;
-
-	private Date fullyBlacklistDate;
 	
 	public Employer(String username, String password, String empName, String emailID, String contactNumber, String empDesc) {
 		
@@ -31,82 +24,12 @@ public class Employer extends User {
 		this.emailID = emailID;
 		this.contactNumber = contactNumber;
 		this.aboutEmployer = empDesc;
-		
-		this.complaintList = new ArrayList<>();
 
-		this.isFullyBlacklisted = false;
-		this.isProvisionallyBlacklisted = false;
-
-		this.fullyBlacklistDate = null;
 	}
 
-	public boolean getProvisionallyBlacklistStatus()
-	{
-		return this.isProvisionallyBlacklisted;
-	}
-
-	public boolean getFullyBlacklistStatus()
-	{
-		return  this.isFullyBlacklisted;
-	}
-
-	public void setFullyBlacklistDate(Date fullyBlacklistDate)
-	{
-		this.fullyBlacklistDate = fullyBlacklistDate;
-	}
-
-	public Date getFullyBlacklistDate()
-	{
-		return this.fullyBlacklistDate;
-	}
-	
-	public void sendComplaint() throws NullPointerException, InvalidComplaintHierarchyException, UserAlreadyBlacklistedException, InvalidAccessRightsException {
-
-		//avoid accessing this method if user is blacklisted
-		if(this.getFullyBlacklistStatus() || this.getProvisionallyBlacklistStatus())
-		{
-			throw new InvalidAccessRightsException("You have been blacklisted. Cannot perform operation.");
-		}
-
-		UserDatabase userDB = new UserDatabase();
-		Scanner scan = new Scanner(System.in);
-		System.out.println("Enter username ");
-		String username = scan.nextLine();
-		
-		//check if user is of an applicant type
-		if(!(userDB.fetchUser(username) instanceof Applicant))
-		{
-			throw new InvalidComplaintHierarchyException("Username is not of type Applicant");
-		}
-		Applicant app = (Applicant) userDB.fetchUser(username);
-
-		if(app.getFullyBlacklistStatus() || app.getProvisionallyBlacklistStatus())
-		{
-			throw new UserAlreadyBlacklistedException("This user has already been blacklisted");
-		}
-
-		System.out.print("Enter your complaint ");
-		String complaintDesc = scan.nextLine();
-
-		Complaint newComplaint = new Complaint(this,app, complaintDesc);
-
-		app.getComplaint(newComplaint);
-	}
-	
-	public void getComplaint(Complaint complaint)
-	{
-		this.complaintList.add(complaint);
-		
-		if(this.complaintList.size()==3)
-		{
-			Blacklist newBlacklist = new Blacklist();
-			newBlacklist.provisionallyBlacklist(this);
-			this.isProvisionallyBlacklisted = true;
-		}
-	}
 	
 	public void showEmployerProfile() throws InvalidAccessRightsException {
-		if(isFullyBlacklisted)
+		if(super.getFullyBlacklistStatus())
 		{
 			throw new InvalidAccessRightsException("Cannot perform operation. You are fully Blacklisted");
 		}
@@ -124,7 +47,7 @@ public class Employer extends User {
 						  boolean licenseRequired,
 						  double minYearsOfExperience,
 						  int noOfStudentsRequired) throws InvalidAccessRightsException {
-		if(isFullyBlacklisted || isProvisionallyBlacklisted)
+		if(super.getFullyBlacklistStatus() || super.getProvisionallyBlacklistStatus())
 		{
 			throw new InvalidAccessRightsException("Cannot create jobs. You have been blacklisted");
 		}
@@ -156,7 +79,7 @@ public class Employer extends User {
 		 * 4. Add this applicant to the finalized list
 		 * 5. Send this applicant a job offer
 		 * 6. Add the offer to the offer list in the job class
-		 * 6. Add the remaining applicants to the rejected student list
+		 * 7. Add the remaining applicants to the rejected student list
 		 */
 	}
 

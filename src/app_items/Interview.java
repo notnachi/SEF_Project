@@ -1,15 +1,15 @@
 package app_items;
 
 import java.util.ArrayList;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import app_users.Applicant;
 
 public class Interview {
 	Job job;
-	Date interviewTime;
-	
-	public Interview(Job job, Date interviewTime)
+	LocalDateTime interviewTime;
+
+	public Interview(Job job, LocalDateTime interviewTime)
 	{
 		this.job = job;
 		this.interviewTime = interviewTime;
@@ -23,11 +23,8 @@ public class Interview {
 		this.job = job;
 	}
 	
-	public Date getInterviewTime() {
+	public LocalDateTime getInterviewTime() {
 		return interviewTime;
 	}
 	
-	public void setInterviewTime(Date interviewTime) {
-		this.interviewTime = interviewTime;
-	}
 }

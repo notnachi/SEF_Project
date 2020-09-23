@@ -143,18 +143,18 @@ public class AppMain {
 				}
 				break;
 			case StaffLogin:
-				try {
-					Maintainance staff = userDB.getStaff(userID, password);
-					StaffDashboard staffDash = new StaffDashboard(staff);
-					staffDash.displayMainMenu();
-				} 
-				catch (NullPointerException e) {
-					System.err.println("Username not found in database. Please try again");
-				} 
-				catch (InvalidPasswordException e) {
-					System.err.println(e.getMessage());
-				}
-				break;
+//				try {
+////					Maintainance staff = userDB.getStaff(userID, password);
+////					StaffDashboard staffDash = new StaffDashboard(staff);
+////					staffDash.displayMainMenu();
+//				}
+//				catch (NullPointerException e) {
+//					System.err.println("Username not found in database. Please try again");
+//				}
+//				catch (InvalidPasswordException e) {
+//					System.err.println(e.getMessage());
+//				}
+//				break;
 		}
 	}
 	

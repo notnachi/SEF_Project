@@ -38,12 +38,12 @@ public class Blacklist {
 		this.fullyBlacklistedUsers.remove(username);
 	}
 	
-	public HashMap<String, User> showProvisionallyBlacklistedUser()
+	public HashMap<String, User> getProvisionallyBlacklistedUserList()
 	{
 		return this.provisionalBlacklistedUsers;
 	}
 	
-	public HashMap<String, User> showFullyBlacklistedUser()
+	public HashMap<String, User> getFullyBlacklistedUserList()
 	{
 		return this.fullyBlacklistedUsers;
 	}
