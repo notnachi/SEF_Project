@@ -1,8 +1,11 @@
 package app_items;
 
+import java.time.LocalDateTime;
 import java.util.*;
 
 import app_exceptions.CannotFullyBlacklistException;
+import app_exceptions.CannotReactivateUserException;
+import app_exceptions.UserNotPresentException;
 import app_users.User;
 
 public class Blacklist {
@@ -30,22 +33,38 @@ public class Blacklist {
 	
 	public void removeFromProvisionalBlacklist(String username) throws NullPointerException
 	{
+
 		this.provisionalBlacklistedUsers.remove(username);
 	}
 	
-	public void removeFromFullyBlacklist(String username) throws NullPointerException
-	{
+	public void removeFromFullyBlacklist(String username)  {
+
 		this.fullyBlacklistedUsers.remove(username);
 	}
 	
-	public HashMap<String, User> getProvisionallyBlacklistedUserList()
+	public static HashMap<String, User> getProvisionallyBlacklistedUserList()
 	{
-		return this.provisionalBlacklistedUsers;
+		return provisionalBlacklistedUsers;
 	}
 	
-	public HashMap<String, User> getFullyBlacklistedUserList()
+	public static HashMap<String, User> getFullyBlacklistedUserList()
 	{
-		return this.fullyBlacklistedUsers;
+		return fullyBlacklistedUsers;
 	}
 
+	public static void showProvisionallyBlacklistedUsers()
+	{
+		for(String userID : provisionalBlacklistedUsers.keySet())
+		{
+			System.out.println(userID);
+		}
+	}
+
+	public static void showFullyBlacklistedUsers()
+	{
+		for(String userID : fullyBlacklistedUsers.keySet())
+		{
+			System.out.println(userID);
+		}
+	}
 }

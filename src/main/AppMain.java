@@ -2,6 +2,7 @@ package main;
 
 import java.util.Scanner;
 
+import app_exceptions.InvalidAccessRightsException;
 import app_exceptions.InvalidPasswordException;
 import app_users.Applicant;
 import app_users.Employer;
@@ -15,6 +16,56 @@ import dashboard.StaffDashboard;
 public class AppMain {
 	
 	private static UserDatabase userDB = new UserDatabase();
+
+	private static void loadDummyData() throws InvalidAccessRightsException {
+		Applicant app1 = new Applicant("app1", "abc123", "nachi", "1234", false, true);
+		app1.addAvailability("part-time",40,"IT");
+
+		Applicant app2 = new Applicant("app2", "abc123", "anurag", "1234", true, true);
+		app2.addAvailability("part-time",40,"IT");
+
+		Applicant app3 = new Applicant("app3", "abc123", "joel", "1234", false, true);
+		app3.addAvailability("part-time",40,"IT");
+		app3.setProvisionallyBlacklistStatus(true);
+
+		Applicant app4 = new Applicant("app4", "abc123", "test", "test", false, true);
+		app4.addAvailability("part-time",40,"IT");
+
+		Applicant app5 = new Applicant("app5", "abc123", "test", "test", true, true);
+		app5.addAvailability("full-time",40,"IT");
+
+		Applicant app6 = new Applicant("app6", "abc123", "test", "test", false, false);
+		app6.addAvailability("full-time",40,"IT");
+
+		Applicant app7 = new Applicant("app7", "abc123", "test", "test", false, true);
+		app7.addAvailability("full-time",40,"IT");
+
+		Applicant app8 = new Applicant("app8", "abc123", "test", "test", false, true);
+		app8.addAvailability("full-time",40,"IT");
+
+		Employer emp1 = new Employer("emp1", "abc123", "google", "google.com", "1234", "test");
+		emp1.createJob(true,"part-time",20,"IT",true,0);
+		emp1.setProvisionallyBlacklistStatus(true);
+
+		Employer emp2 = new Employer("emp2", "abc123", "amazon", "amazon.com", "1234", "test");
+		emp2.createJob(false,"full-time",40,"IT",true,0);
+
+		Maintainance staff1 = new Maintainance("staff1", "abc123");
+
+		userDB.addUsers(app1.getUsername(),app1);
+		userDB.addUsers(app2.getUsername(),app2);
+		userDB.addUsers(app3.getUsername(),app3);
+		userDB.addUsers(app4.getUsername(),app4);
+		userDB.addUsers(app5.getUsername(),app5);
+		userDB.addUsers(app6.getUsername(),app6);
+		userDB.addUsers(app7.getUsername(),app7);
+		userDB.addUsers(app8.getUsername(),app8);
+
+		userDB.addUsers(emp1.getUsername(), emp1);
+		userDB.addUsers(emp2.getUsername(), emp2);
+
+		userDB.addUsers(staff1.getUsername(),staff1);
+	}
 	
 	private enum MainMenuOption
 	{
@@ -23,8 +74,8 @@ public class AppMain {
 		Exit
 	}
 	
-	public static void displayMainMenu()
-	{
+	public static void displayMainMenu() throws InvalidAccessRightsException {
+		loadDummyData();
 		String exitProg = "n";
 		
 		do
@@ -120,7 +171,7 @@ public class AppMain {
 				try {
 					Applicant app = userDB.getApplicant(userID, password);
 					ApplicantDashboard appDash = new ApplicantDashboard(app);
-					//appDash.displayMainMenu();
+					appDash.displayMainMenu();
 				} 
 				catch (NullPointerException e) {
 					System.err.println("Username not found in database. Please try again");
@@ -133,7 +184,7 @@ public class AppMain {
 				try {
 					Employer emp = userDB.getEmployer(userID, password);
 					EmployerDashboard empDash = new EmployerDashboard(emp);
-					//empDash.displayMainMenu();
+					empDash.displayMainMenu();
 				} 
 				catch (NullPointerException e) {
 					System.err.println("Username not found in database. Please try again");
@@ -143,18 +194,18 @@ public class AppMain {
 				}
 				break;
 			case StaffLogin:
-//				try {
-////					Maintainance staff = userDB.getStaff(userID, password);
-////					StaffDashboard staffDash = new StaffDashboard(staff);
-////					staffDash.displayMainMenu();
-//				}
-//				catch (NullPointerException e) {
-//					System.err.println("Username not found in database. Please try again");
-//				}
-//				catch (InvalidPasswordException e) {
-//					System.err.println(e.getMessage());
-//				}
-//				break;
+				try {
+					Maintainance staff = userDB.getStaff(userID, password);
+					StaffDashboard staffDash = new StaffDashboard(staff);
+					staffDash.displayMainMenu();
+				}
+				catch (NullPointerException e) {
+					System.err.println("Username not found in database. Please try again");
+				}
+				catch (InvalidPasswordException e) {
+					System.err.println(e.getMessage());
+				}
+				break;
 		}
 	}
 	
@@ -274,7 +325,7 @@ public class AppMain {
 		return choice;
 	}
 	
-	public static void main(String[] args) {
+	public static void main(String[] args) throws InvalidAccessRightsException {
 		
 		displayMainMenu();
 		

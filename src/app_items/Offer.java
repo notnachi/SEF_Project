@@ -33,9 +33,15 @@ public class Offer {
 		else
 		{
 			this.offerStatus = "Job Offer Rejected";
+			applicant.rejectOffer();
 			applicant.setStatus("Available");
 		}
 	}
-	
-	
+
+	@Override
+	public String toString() {
+		return "Offer{" +
+				"job=" + job +
+				'}';
+	}
 }

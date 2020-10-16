@@ -1,9 +1,7 @@
 package app_items;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Stack;
+import java.time.LocalDateTime;
+import java.util.*;
 
 import app_users.Applicant;
 import app_users.Employer;
@@ -36,16 +34,14 @@ public class Job{
 	private boolean licenseRequired;
 	private double minYearsOfExperience;
 
-
-	//count of free spots available
-	private int noOfSpotsAvailable;
-
-	//number of students required
-	private int noOfStudentsRequired;
-
 	/*
-	 * Job should have a list of all shortlisted applicants
+	 * Job should have a list of applications
 	 */
+
+	private Map<String, JobApplication> applicationList;
+
+	private LocalDateTime startingTimeSlot;
+	private LocalDateTime endingTimeSlot;
 
 	private HashMap<String, Applicant> shortlistedApplicantList;
 
@@ -64,8 +60,7 @@ public class Job{
 			   double workingHours,
 			   String jobCategory,
 			   boolean licenseRequired,
-			   double minYearsOfExperience,
-			   int noOfStudentsRequired)
+			   double minYearsOfExperience)
 	{
 		this.jobID = "J" + jobCount;
 		this.internationalApply = internationalApply;
@@ -74,17 +69,61 @@ public class Job{
 		this.jobCategory = jobCategory;
 		this.licenseRequired = licenseRequired;
 		this.minYearsOfExperience = minYearsOfExperience;
-		this.noOfStudentsRequired = noOfStudentsRequired;
 
 		this.jobAvailable = true;
-		this.noOfSpotsAvailable = noOfStudentsRequired;
 
+		this.applicationList = new HashMap<>();
 		this.shortlistedApplicantList = new HashMap<>();
+
 		this.jobResult = new Result();
 		this.offerList = new ArrayList<>();
 
 		jobCount+=1;
 
+	}
+
+
+	public void addJobApplication(Applicant applicant, JobApplication application)
+	{
+		this.applicationList.put(applicant.getUsername(), application);
+	}
+
+	public JobApplication fetchJobApplication(String applicantUsername)
+	{
+		return this.applicationList.get(applicantUsername);
+	}
+
+	public void setStartingTimeSlot(LocalDateTime time)
+	{
+		this.startingTimeSlot = time;
+	}
+
+	public void setEndingTimeSlot(LocalDateTime time)
+	{
+		this.endingTimeSlot = time;
+	}
+
+	public Map<String,JobApplication> getRankedApplications()
+	{
+		Map<String, JobApplication> rankedList = new HashMap<>();
+
+		for(String appUsername : applicationList.keySet())
+		{
+			if(applicationList.get(appUsername).getStatusOfApplication().compareToIgnoreCase("RANKED")==0)
+			{
+				rankedList.put(appUsername , applicationList.get(appUsername));
+			}
+		}
+
+		return rankedList;
+	}
+
+	public HashMap<String, Applicant> getShortlistedApplicantList() {
+		return shortlistedApplicantList;
+	}
+
+	public void setJobResult(Result jobResult) {
+		this.jobResult = jobResult;
 	}
 
 	public String getJobID() {
@@ -111,14 +150,6 @@ public class Job{
 		return minYearsOfExperience;
 	}
 
-	public int getNoOfSpotsAvailable() {
-		return noOfSpotsAvailable;
-	}
-
-	public int getNoOfStudentsRequired() {
-		return noOfStudentsRequired;
-	}
-
 	public boolean isJobAvailable() {
 		return jobAvailable;
 	}
@@ -135,8 +166,21 @@ public class Job{
 		}
 	}
 
+	public void setOfferList(ArrayList<Offer> offerList) {
+		this.offerList = offerList;
+	}
 
+	@Override
+	public String toString() {
+		StringBuilder jobDetails = new StringBuilder();
 
+		jobDetails.append("Job ID -> " + jobID + "\n");
+		jobDetails.append("Job Type -> " + jobType + "\n");
+		jobDetails.append("Job Category -> " + jobCategory + "\n");
+		jobDetails.append("Job Working hours -> " + workingHours + "\n");
+
+		return jobDetails.toString();
+	}
 }
 	
 	

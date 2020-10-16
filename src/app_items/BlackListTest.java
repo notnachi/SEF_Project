@@ -2,18 +2,21 @@ package app_items;
 
 import static org.junit.Assert.*;
 
-import app_exceptions.InvalidAccessRightsException;
-import app_exceptions.InvalidComplaintHierarchyException;
-import app_exceptions.UserAlreadyBlacklistedException;
-import app_exceptions.UserNotPresentException;
+import app_exceptions.*;
 import app_users.Applicant;
 import app_users.Employer;
 import app_users.Maintainance;
 import app_users.UserDatabase;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.util.List;
+
+/*
+ * Blacklisting Use case Test
+ * Positive Test Cases
+ */
 
 
 public class BlackListTest {
@@ -21,8 +24,10 @@ public class BlackListTest {
     private static UserDatabase userDB = new UserDatabase();
     static Applicant app1 = new Applicant("app1", "abc123", "nachi", "1234", false, true);
     static Applicant app2 = new Applicant("app2", "abc123", "anurag", "1234", true, true);
+    static Applicant app3 = new Applicant("app3", "abc123", "joel", "1234", false, true);
 
     static Employer emp1 = new Employer("emp1", "abc123", "google", "google.com", "1234", "test");
+    static Employer emp2 = new Employer("emp2", "abc123", "amazon", "amazon.com", "1234", "test");
     static Maintainance staff1 = new Maintainance("staff1", "abc123");
 
     @BeforeClass
@@ -30,12 +35,14 @@ public class BlackListTest {
     {
         userDB.addUsers(app1.getUsername(),app1);
         userDB.addUsers(app2.getUsername(),app2);
+        userDB.addUsers(app3.getUsername(),app2);
         userDB.addUsers(emp1.getUsername(),emp1);
+        userDB.addUsers(emp2.getUsername(),emp2);
         userDB.addUsers(staff1.getUsername(),staff1);
     }
 
-    @Test
-    public void provisionallyBlacklistTest() {
+    @Test (expected = InvalidAccessRightsException.class)
+    public void provisionallyBlacklistTest() throws InvalidAccessRightsException {
 
         Blacklist blacklist = new Blacklist();
 
@@ -59,6 +66,8 @@ public class BlackListTest {
         assertTrue(app1.getProvisionallyBlacklistStatus());
 
         assertTrue(blacklist.getProvisionallyBlacklistedUserList().containsKey(app1.getUsername()));
+
+        app1.addAvailability("part time",40,"IT");
 
     }
 
@@ -94,7 +103,45 @@ public class BlackListTest {
 
         assertFalse(app2.getProvisionallyBlacklistStatus());
         assertFalse(blacklist.getFullyBlacklistedUserList().containsKey(app2.getUsername()));
+
+
     }
+
+    @Test (expected = InvalidComplaintHierarchyException.class)
+    public void sendComplaintTest() throws UserAlreadyBlacklistedException, InvalidAccessRightsException, InvalidComplaintHierarchyException {
+        //check whether the employees are employees
+        emp1.sendComplaint(emp2,"test complaint");
+    }
+
+    @Test (expected = CannotReactivateUserException.class)
+    public void revokeFullyBlacklistStatusTest() throws CannotReactivateUserException, UserNotPresentException {
+
+        assertTrue(app3.getFullyBlacklistDate()==null);
+
+        try {
+            emp1.sendComplaint(app3,"test complaint");
+            emp1.sendComplaint(app3,"test complaint");
+            emp1.sendComplaint(app3,"test complaint");
+        } catch (UserAlreadyBlacklistedException e) {
+            e.printStackTrace();
+        } catch (InvalidAccessRightsException e) {
+            e.printStackTrace();
+        } catch (InvalidComplaintHierarchyException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            staff1.fullyBlacklistUser(app3);
+        } catch (CannotFullyBlacklistException e) {
+            e.printStackTrace();
+        }
+
+        assertTrue(app3.getFullyBlacklistDate()!=null);
+        staff1.removeFullyBlacklist(app3);
+    }
+
+
+
 
 
 }

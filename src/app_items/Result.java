@@ -9,6 +9,12 @@ public class Result {
 	
 	private ArrayList<Applicant> finalApplicantList;
 	private ArrayList<Applicant> rejectedApplicantList;
+
+	public Result()
+	{
+		finalApplicantList = new ArrayList<>();
+		rejectedApplicantList = new ArrayList<>();
+	}
 	
 	public void addFinalApplicant(Applicant applicant)
 	{
@@ -19,6 +25,13 @@ public class Result {
 	{
 		this.rejectedApplicantList.addAll(rejectedApplicants);
 	}
-			
+
+	public ArrayList<Applicant> getFinalApplicantList() {
+		return finalApplicantList;
+	}
+
+	public ArrayList<Applicant> getRejectedApplicantList() {
+		return rejectedApplicantList;
+	}
 }
 

@@ -29,9 +29,9 @@ public class UserDatabase {
 		this.userData.put(username, user);
 	}
 	
-	public User fetchUser(String username)
+	public static User fetchUser(String username)
 	{
-		return this.userData.get(username);
+		return userData.get(username);
 	}
 	
 	/**

@@ -3,6 +3,7 @@ package app_users;
 import java.time.LocalDateTime;
 import java.util.*;
 
+import app_exceptions.DuplicateCategoryException;
 import app_exceptions.InvalidAccessRightsException;
 import app_exceptions.InvalidComplaintHierarchyException;
 import app_exceptions.UserAlreadyBlacklistedException;
@@ -53,21 +54,16 @@ public class Applicant extends User {
 
 	/*********** Runtime updated ***********/
 
+	private Map<String, JobApplication> applicationList;
+
 	//stores the interview times
 	private ArrayList <Interview> interviewList;
 
-	private Offer jobOffer;
-
-	//arraylist of complaints
-	private ArrayList<Complaint> complaintList;
+	private JobApplication jobOffer;
 
 	private LocalDateTime fullyBlacklistDate;
 
 	/*********** Blacklist Related ***********/
-
-	private boolean isProvisionallyBlacklisted;
-
-	private boolean isFullyBlacklisted;
 
 
 	public Applicant(String username, String password, String name, String contactNumber, boolean isInternational, boolean hasLicense)
@@ -84,22 +80,33 @@ public class Applicant extends User {
 		this.employmentRecords =  new ArrayList<>();
 		this.studentQualifications = new ArrayList<>();
 		this.availabilityList  = new HashMap<>();
+
+		this.applicationList = new HashMap<>();
 		this.interviewList = new ArrayList<>();
-		this.complaintList = new ArrayList<>();
 		
 		this.jobOffer = null;
 
-		this.isFullyBlacklisted = false;
-		this.isProvisionallyBlacklisted = false;
 
 		this.fullyBlacklistDate = null;
 
 	}
 
+	public void receiveJobApplication(Job job, JobApplication application)
+	{
+		this.applicationList.put(job.getJobID(),application);
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public String getContactNumber() {
+		return contactNumber;
+	}
 
 	public void showStudentProfile() throws InvalidAccessRightsException //Nachi edit - removed applicant argument from function
 	{
-		if(isFullyBlacklisted)
+		if(super.getFullyBlacklistStatus())
 		{
 			throw new InvalidAccessRightsException("Cannot perform operation. You are fully Blacklisted");
 		}
@@ -154,6 +161,10 @@ public class Applicant extends User {
 		this.status = status;
 	}
 
+	public ArrayList<Interview> getInterviewList() {
+		return interviewList;
+	}
+
 	public int checkNationalityRequirement(Job job)
 	{
 		return Boolean.compare(job.isInternationalApply(), this.isInternational);
@@ -182,10 +193,149 @@ public class Applicant extends User {
 		return false;
 	}
 
-	public void addAvailability(String jobType, double workingHours, String jobCategory)
-	{
+	public void addAvailability() throws InvalidAccessRightsException {
+		if(super.getFullyBlacklistStatus() || super.getProvisionallyBlacklistStatus())
+		{
+			throw new InvalidAccessRightsException("Cannot perform operation. You have been blacklisted");
+		}
+		Scanner sc = new Scanner(System.in);
+		String jobType;
+		double workingHours;
+		String jobCategory;
+		System.out.println("Enter the job type");
+		jobType = sc.next();
+		System.out.println("Enter the number of working hours");
+		workingHours = sc.nextDouble();
+		System.out.println("Enter the job category");
+		jobCategory = sc.next();
+
 		Availability newAvailability = new Availability(jobType, workingHours, jobCategory);
 		this.availabilityList.put(newAvailability.getJobType(), newAvailability);
+	}
+
+	public void addEmploymentRecord() throws DuplicateCategoryException, InvalidAccessRightsException {
+		if(super.getFullyBlacklistStatus() || super.getProvisionallyBlacklistStatus())
+		{
+			throw new InvalidAccessRightsException("Cannot perform operation. You have been blacklisted");
+		}
+		Scanner sc = new Scanner(System.in);
+		String companyName;
+		String domain;
+		double yearsOfExperience;
+		String role;
+		System.out.println("Enter the comapnay name");
+		companyName = sc.next();
+		System.out.println("Enter the domain of work");
+		domain = sc.next();
+		System.out.println("Enter the years of Experience");
+		yearsOfExperience = sc.nextDouble();
+		System.out.println("Enter the role in the company");
+		role = sc.next();
+
+
+		EmploymentRecord newEmploymentRecord = new EmploymentRecord(companyName, domain, yearsOfExperience, role);
+		for (EmploymentRecord emp : this.employmentRecords) {
+			if((emp.getcompanyName().equals(companyName)) && (emp.getdomain().equals(domain)) && (emp.getrole().equals(role)))
+			//if (this.employmentRecords.contains(newEmploymentRecord))
+			{
+				throw new DuplicateCategoryException ("The employer records already exist");
+			}
+		}
+
+		this.employmentRecords.add(newEmploymentRecord);
+		this.totalYearsOfExperience += yearsOfExperience;
+	}
+
+	public void addQualifications() throws DuplicateCategoryException, InvalidAccessRightsException {
+		if(super.getFullyBlacklistStatus() || super.getProvisionallyBlacklistStatus())
+		{
+			throw new InvalidAccessRightsException("Cannot perform operation. You have been blacklisted");
+		}
+		Scanner sc = new Scanner(System.in);
+		String degree;
+		String specialization;
+		System.out.println("Enter the degree");
+		degree = sc.next();
+		System.out.println("Enter the field of specialization");
+		specialization = sc.next();
+
+		Qualifications newQualifications = new Qualifications(degree, specialization);
+		for (Qualifications qua : this.studentQualifications) {
+			if((qua.getdegree().equals(degree)) && (qua.getspecialization().equals(specialization)))
+			{
+				throw new DuplicateCategoryException ("The student qualification already exist");
+			}
+		}
+		this.studentQualifications.add(newQualifications);
+	}
+
+	public void addReferences() throws DuplicateCategoryException, InvalidAccessRightsException {
+		if(super.getFullyBlacklistStatus() || super.getProvisionallyBlacklistStatus())
+		{
+			throw new InvalidAccessRightsException("Cannot perform operation. You have been blacklisted");
+		}
+		Scanner sc = new Scanner(System.in);
+		String references;
+		System.out.println("Enter the reference you wish to update");
+		references = sc.next();
+		if (this.references.contains(references))
+		{
+			throw new DuplicateCategoryException ("The student qualification already exist");
+		}
+		this.references.add(references);
+	}
+
+	public void addAvailability(String jobType, double workingHours, String jobCategory) throws InvalidAccessRightsException {
+		if(super.getFullyBlacklistStatus() || super.getProvisionallyBlacklistStatus())
+		{
+			throw new InvalidAccessRightsException("Cannot perform operation. You have been blacklisted");
+		}
+		Availability newAvailability = new Availability(jobType, workingHours, jobCategory);
+		this.availabilityList.put(newAvailability.getJobType(), newAvailability);
+	}
+
+	public void addEmploymentRecord(String companyName, String domain, double yearsOfExperience, String role) throws DuplicateCategoryException, InvalidAccessRightsException {
+		if(super.getFullyBlacklistStatus() || super.getProvisionallyBlacklistStatus())
+		{
+			throw new InvalidAccessRightsException("Cannot perform operation. You have been blacklisted");
+		}
+		EmploymentRecord newEmploymentRecord = new EmploymentRecord(companyName, domain, yearsOfExperience, role);
+		for (EmploymentRecord emp : this.employmentRecords) {
+			if((emp.getcompanyName().equals(companyName)) && (emp.getdomain().equals(domain)) && (emp.getrole().equals(role)))
+			//if (this.employmentRecords.contains(newEmploymentRecord))
+			{
+				throw new DuplicateCategoryException ("The employer records already exist");
+			}
+		}
+
+		this.employmentRecords.add(newEmploymentRecord);
+	}
+
+	public void addQualifications(String degree, String specialization) throws DuplicateCategoryException, InvalidAccessRightsException {
+		if(super.getFullyBlacklistStatus() || super.getProvisionallyBlacklistStatus())
+		{
+			throw new InvalidAccessRightsException("Cannot perform operation. You have been blacklisted");
+		}
+		Qualifications newQualifications = new Qualifications(degree, specialization);
+		for (Qualifications qua : this.studentQualifications) {
+			if((qua.getdegree().equals(degree)) && (qua.getspecialization().equals(specialization)))
+			{
+				throw new DuplicateCategoryException ("The student qualification already exist");
+			}
+		}
+		this.studentQualifications.add(newQualifications);
+	}
+
+	public void addReferences(String references) throws DuplicateCategoryException, InvalidAccessRightsException {
+		if(super.getFullyBlacklistStatus() || super.getProvisionallyBlacklistStatus())
+		{
+			throw new InvalidAccessRightsException("Cannot perform operation. You have been blacklisted");
+		}
+		if (this.references.contains(references))
+		{
+			throw new DuplicateCategoryException("The student qualification already exist");
+		}
+		this.references.add(references);
 	}
 
 	public void addInterview(Interview interview)
@@ -197,15 +347,65 @@ public class Applicant extends User {
 		this.interviewList.add(interview);
 	}
 
-	public void receiveJobOffer(Offer jobOffer)
+	public void viewInterview()
 	{
-		this.jobOffer = jobOffer;
+		if(interviewList.isEmpty())
+		{
+			System.out.println("You have no interviews scheduled");
+		}
+		for(Interview iw : interviewList)
+		{
+			System.out.println(iw);
+		}
+	}
+
+
+	public void receiveJobOffer(JobApplication application)
+	{
+		this.jobOffer = application;
 		this.setStatus("Pending");
+	}
+
+	public void rejectOffer()
+	{
+		this.jobOffer = null;
+	}
+
+	public JobApplication checkOffer()
+	{
+		return this.jobOffer;
 	}
 
 	public void acceptJobOffer(boolean acceptOffer)
 	{
-		this.jobOffer.updateOfferStatus(acceptOffer);
+		this.jobOffer.acceptOffer();
+	}
+
+	public void acceptJobOffer()
+	{
+		if(this.jobOffer == null)
+		{
+			System.out.println("You have no active job offers");
+		}
+		else
+		{
+			Scanner scan =  new Scanner(System.in);
+			System.out.println("You have been sent the following offer");
+			System.out.println(this.jobOffer);
+			System.out.print("Do you want to accept it? Press Y for yes and N for no ");
+			String response =  scan.next();
+			if(response.compareToIgnoreCase("y")==0)
+			{
+				jobOffer.acceptOffer();
+				this.status = "EMPLOYED";
+			}
+			else
+			{
+				jobOffer.rejectOffer();
+				this.status = "available";
+			}
+		}
+
 	}
 
 

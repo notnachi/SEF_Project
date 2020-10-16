@@ -30,11 +30,32 @@ public class Registration_Dashboard {
 		
 		System.out.print("Enter contact details ");
 		String contact = scan.nextLine();
+
+		boolean isInternational;
+		System.out.print("Are you an international applicant ? Press Y for yes and N for no ");
+		String checkInternational =  scan.next();
+		if(checkInternational.compareToIgnoreCase("y")==0)
+		{
+			isInternational = true;
+		}
+		else
+		{
+			isInternational = false;
+		}
+
+		boolean hasLicense;
+		System.out.print("Do you have a driving license ? Press Y for yes and N for no ");
+		String checkLicense =  scan.next();
+		if(checkLicense.compareToIgnoreCase("y")==0)
+		{
+			hasLicense = true;
+		}
+		else
+		{
+			hasLicense = false;
+		}
 		
-		System.out.print("Enter nationality ");
-		String nationality = scan.nextLine();
-		
-		//this.userDB.addUsers(username, new Applicant(username, password, name, contact, nationality));
+		this.userDB.addUsers(username, new Applicant(username, password, name, contact, isInternational, hasLicense));
 		
 //		System.out.println("Is this user an instance of applicant" + (userDB.fetchUser(username) instanceof Applicant));
 	}

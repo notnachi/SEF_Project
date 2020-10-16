@@ -1,11 +1,9 @@
 package app_users;
 
+import java.time.LocalDateTime;
 import java.util.Scanner;
 
-import app_exceptions.CannotFullyBlacklistException;
-import app_exceptions.DuplicateCategoryException;
-import app_exceptions.InvalidAccessRightsException;
-import app_exceptions.UserNotPresentException;
+import app_exceptions.*;
 import app_items.Blacklist;
 import app_items.JobCategory;
 
@@ -58,26 +56,44 @@ public class Maintainance extends User {
 	}
 	
 	public void removeProvisionalBlacklist(User user) throws UserNotPresentException {
+
 		if(!blacklist.getProvisionallyBlacklistedUserList().containsKey(user.getUsername()))
 		{
 			throw new UserNotPresentException("User is not in provisionally blacklisted hashmap");
 		}
-		else
-		{
-			user.setProvisionallyBlacklistStatus(false);
-			user.clearAllComplaints();
-			blacklist.removeFromProvisionalBlacklist(user.getUsername());
-		}
+
+		user.setProvisionallyBlacklistStatus(false);
+		user.clearAllComplaints();
+		blacklist.removeFromProvisionalBlacklist(user.getUsername());
+
 
 	}
 		
-	public void removeFullyBlacklist()
-	{
+	public void removeFullyBlacklist(User user) throws UserNotPresentException, CannotReactivateUserException {
+
+		if(!blacklist.getFullyBlacklistedUserList().containsKey(user.getUsername()))
+		{
+			throw new UserNotPresentException("User is not in fully blacklisted hashmap");
+		}
+
+		if(LocalDateTime.now().isBefore(user.getFullyBlacklistDate().plusMonths(3)))
+		{
+			throw new CannotReactivateUserException("Cannot reactivate fully blacklisted user before 3 months");
+		}
+
+		user.setFullyBlacklistStatus(false);
+		user.setFullyBlacklistDate(null);
+
+		blacklist.removeFromFullyBlacklist(user.getUsername());
 
 	}
 
-	public void fullyBlacklistUser() throws CannotFullyBlacklistException
+	public void fullyBlacklistUser(User user) throws CannotFullyBlacklistException
 	{
+		user.setProvisionallyBlacklistStatus(false);
+		user.setFullyBlacklistStatus(true);
+		user.setFullyBlacklistDate(LocalDateTime.now());
+		blacklist.fullyBlacklist(user);
 
 	}
 
@@ -85,5 +101,5 @@ public class Maintainance extends User {
 	{
 		JobCategory newCategory = new JobCategory(categoryName);
 	}
-	}
+}
 
