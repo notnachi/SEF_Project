@@ -1,9 +1,12 @@
 package main;
 
+import java.io.FileNotFoundException;
 import java.util.Scanner;
 
+import app_exceptions.DuplicateCategoryException;
 import app_exceptions.InvalidAccessRightsException;
 import app_exceptions.InvalidPasswordException;
+import app_items.JobCategory;
 import app_users.Applicant;
 import app_users.Employer;
 import app_users.Maintainance;
@@ -13,44 +16,52 @@ import dashboard.EmployerDashboard;
 import dashboard.Registration_Dashboard;
 import dashboard.StaffDashboard;
 
+import javax.mail.MessagingException;
+
 public class AppMain {
 	
 	private static UserDatabase userDB = new UserDatabase();
 
-	private static void loadDummyData() throws InvalidAccessRightsException {
-		Applicant app1 = new Applicant("app1", "abc123", "nachi", "1234", false, true);
+	private static void loadDummyData() throws InvalidAccessRightsException, DuplicateCategoryException {
+
+		JobCategory.getInstance().addJobCategory("IT");
+		JobCategory.getInstance().addJobCategory("HR");
+		JobCategory.getInstance().addJobCategory("Finance");
+		JobCategory.getInstance().addJobCategory("Design");
+
+		Applicant app1 = new Applicant("app1", "abc123", "app1@gmail.com" , "Nachiket Rao", "test", false, true);
 		app1.addAvailability("part-time",40,"IT");
 
-		Applicant app2 = new Applicant("app2", "abc123", "anurag", "1234", true, true);
+		Applicant app2 = new Applicant("app2", "abc123","app2@gmail.com",  "anurag", "test", true, true);
 		app2.addAvailability("part-time",40,"IT");
 
-		Applicant app3 = new Applicant("app3", "abc123", "joel", "1234", false, true);
+		Applicant app3 = new Applicant("app3", "abc123","app3@gmail.com" , "joel", "test", false, true);
 		app3.addAvailability("part-time",40,"IT");
 		app3.setProvisionallyBlacklistStatus(true);
 
-		Applicant app4 = new Applicant("app4", "abc123", "test", "test", false, true);
+		Applicant app4 = new Applicant("app4", "abc123","app4@gmail.com" , "test", "test", false, true);
 		app4.addAvailability("part-time",40,"IT");
 
-		Applicant app5 = new Applicant("app5", "abc123", "test", "test", true, true);
+		Applicant app5 = new Applicant("app5", "abc123","app5@gmail.com" , "test", "test", true, true);
 		app5.addAvailability("full-time",40,"IT");
 
-		Applicant app6 = new Applicant("app6", "abc123", "test", "test", false, false);
+		Applicant app6 = new Applicant("app6", "abc123","app6@gmail.com" , "test", "test", false, false);
 		app6.addAvailability("full-time",40,"IT");
 
-		Applicant app7 = new Applicant("app7", "abc123", "test", "test", false, true);
+		Applicant app7 = new Applicant("app7", "abc123", "app7@gmail.com" ,"test", "test", false, true);
 		app7.addAvailability("full-time",40,"IT");
 
-		Applicant app8 = new Applicant("app8", "abc123", "test", "test", false, true);
+		Applicant app8 = new Applicant("app8", "abc123","app8@gmail.com" , "test", "test", false, true);
 		app8.addAvailability("full-time",40,"IT");
 
-		Employer emp1 = new Employer("emp1", "abc123", "google", "google.com", "1234", "test");
+		Employer emp1 = new Employer("emp1", "abc123", "google", "emp2@gmail.com", "1234", "test");
 		emp1.createJob(true,"part-time",20,"IT",true,0);
 		emp1.setProvisionallyBlacklistStatus(true);
 
-		Employer emp2 = new Employer("emp2", "abc123", "amazon", "amazon.com", "1234", "test");
+		Employer emp2 = new Employer("emp2", "abc123", "amazon", "emp2@gmail.com", "1234", "test");
 		emp2.createJob(false,"full-time",40,"IT",true,0);
 
-		Maintainance staff1 = new Maintainance("staff1", "abc123");
+		Maintainance staff1 = new Maintainance("staff1", "abc123", "staff1@gmail.com");
 
 		userDB.addUsers(app1.getUsername(),app1);
 		userDB.addUsers(app2.getUsername(),app2);
@@ -74,7 +85,7 @@ public class AppMain {
 		Exit
 	}
 	
-	public static void displayMainMenu() throws InvalidAccessRightsException {
+	public static void displayMainMenu() throws InvalidAccessRightsException, DuplicateCategoryException, FileNotFoundException {
 		loadDummyData();
 		String exitProg = "n";
 		
@@ -154,8 +165,7 @@ public class AppMain {
 		StaffLogin
 	}
 	
-	public static void displayLoginMenu()
-	{
+	public static void displayLoginMenu() throws FileNotFoundException {
 		LoginOption choice = chooseLoginOption();
 		Scanner scan = new Scanner(System.in);
 		
@@ -325,8 +335,9 @@ public class AppMain {
 		return choice;
 	}
 	
-	public static void main(String[] args) throws InvalidAccessRightsException {
+	public static void main(String[] args) throws InvalidAccessRightsException, DuplicateCategoryException, FileNotFoundException {
 		
+
 		displayMainMenu();
 		
 	}

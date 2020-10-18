@@ -1,15 +1,15 @@
 package app_users;
 
+import java.io.File;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 import app_exceptions.DuplicateCategoryException;
 import app_exceptions.InvalidAccessRightsException;
-import app_exceptions.InvalidComplaintHierarchyException;
-import app_exceptions.UserAlreadyBlacklistedException;
 import app_items.*;
 
-public class Applicant extends User {
+public class Applicant extends EndUser {
 
 	/*
 	 * Login Details - username and password (handled by user class)
@@ -24,6 +24,9 @@ public class Applicant extends User {
 	private String name;
 
 	private String contactNumber;
+
+	private File cv;
+
 
 	/*********** Profile Specifics ***********/
 
@@ -56,9 +59,6 @@ public class Applicant extends User {
 
 	private Map<String, JobApplication> applicationList;
 
-	//stores the interview times
-	private ArrayList <Interview> interviewList;
-
 	private JobApplication jobOffer;
 
 	private LocalDateTime fullyBlacklistDate;
@@ -66,11 +66,12 @@ public class Applicant extends User {
 	/*********** Blacklist Related ***********/
 
 
-	public Applicant(String username, String password, String name, String contactNumber, boolean isInternational, boolean hasLicense)
+	public Applicant(String username, String password, String emailID, String name, String contactNumber, boolean isInternational, boolean hasLicense)
 	{
-		super(username, password);
+		super(username, password, emailID);
 		this.name = name;
 		this.contactNumber = contactNumber;
+		cv = null;
 		this.isInternational = isInternational;
 		this.hasLicense = hasLicense;
 		this.totalYearsOfExperience = 0;
@@ -82,7 +83,6 @@ public class Applicant extends User {
 		this.availabilityList  = new HashMap<>();
 
 		this.applicationList = new HashMap<>();
-		this.interviewList = new ArrayList<>();
 		
 		this.jobOffer = null;
 
@@ -90,6 +90,12 @@ public class Applicant extends User {
 		this.fullyBlacklistDate = null;
 
 	}
+
+	public void setCv(File file)
+	{
+		this.cv = file;
+	}
+
 
 	public void receiveJobApplication(Job job, JobApplication application)
 	{
@@ -114,11 +120,11 @@ public class Applicant extends User {
 		
 		if(!studentQualifications.isEmpty()) 
 		{
-		for(int i =0; i< studentQualifications.size() ; i++)
-		{
-		  Qualifications q = studentQualifications.get(i);
-		  System.out.println(" Qualification "+(i+1)+" :"+ q.getdegree() +"    "  +q.getspecialization());
-		}
+			for(int i =0; i< studentQualifications.size() ; i++)
+			{
+			  Qualifications q = studentQualifications.get(i);
+			  System.out.println(" Qualification "+(i+1)+" :"+ q.getdegree() +"    "  +q.getspecialization());
+			}
 		}
 		else 
 		{
@@ -127,14 +133,14 @@ public class Applicant extends User {
 		
 		if(!employmentRecords.isEmpty())
 		{
-		for(int i = 0; i< employmentRecords.size() ; i++)
-		{
-			 EmploymentRecord jb = employmentRecords.get(i);
-			 System.out.println("Employment Record "+(i+1)+ ":\n "+
-			 " Company Name :"+jb.getcompanyName()+"\n"+
-					 "Domain/skill  :"+jb.getdomain()+"\n"+"Experience  :"+jb.getExperience()+"\n"+" Role  :"+jb.getrole()+" \n");
-			 
-		}
+			for(int i = 0; i< employmentRecords.size() ; i++)
+			{
+				 EmploymentRecord jb = employmentRecords.get(i);
+				 System.out.println("Employment Record "+(i+1)+ ":\n "+
+				 " Company Name :"+jb.getcompanyName()+"\n"+
+						 "Domain/skill  :"+jb.getdomain()+"\n"+"Experience  :"+jb.getExperience()+"\n"+" Role  :"+jb.getrole()+" \n");
+
+			}
 		}
 		else
 		{
@@ -159,10 +165,6 @@ public class Applicant extends User {
 	public void setStatus(String status)
 	{
 		this.status = status;
-	}
-
-	public ArrayList<Interview> getInterviewList() {
-		return interviewList;
 	}
 
 	public int checkNationalityRequirement(Job job)
@@ -199,18 +201,50 @@ public class Applicant extends User {
 			throw new InvalidAccessRightsException("Cannot perform operation. You have been blacklisted");
 		}
 		Scanner sc = new Scanner(System.in);
-		String jobType;
+		int jobTypeNumber = 0;
 		double workingHours;
-		String jobCategory;
-		System.out.println("Enter the job type");
-		jobType = sc.next();
+		String jobType = "";
+		String categoryID;
+		System.out.println("Job Types Available -\n 1. Part-Time\n2. Full-Time\n3.Internship\n");
+		System.out.print("Enter your choice 1-3 ");
+		do {
+			jobTypeNumber = sc.nextInt();
+
+			if(jobTypeNumber == 1)
+			{
+				jobType = "PART-TIME";
+			}
+			else if(jobTypeNumber == 2)
+			{
+				jobType = "FULL-TIME";
+			}
+			else if(jobTypeNumber == 1)
+			{
+				jobType = "INTERNSHIP";
+			}
+			else
+			{
+				System.out.println("Please enter a number from 1 to 3");
+			}
+		}while(jobTypeNumber<1 || jobTypeNumber > 3);
 		System.out.println("Enter the number of working hours");
 		workingHours = sc.nextDouble();
+
+		System.out.println("****Showing all job categories******");
+
+		JobCategory jc = JobCategory.getInstance();
+
+		jc.showAllCategories();
+
 		System.out.println("Enter the job category");
-		jobCategory = sc.next();
+		categoryID = sc.next();
+
+		String jobCategory = jc.getJobCategory(categoryID);
 
 		Availability newAvailability = new Availability(jobType, workingHours, jobCategory);
 		this.availabilityList.put(newAvailability.getJobType(), newAvailability);
+
+		System.out.println("Availability added successfully");
 	}
 
 	public void addEmploymentRecord() throws DuplicateCategoryException, InvalidAccessRightsException {
@@ -338,24 +372,92 @@ public class Applicant extends User {
 		this.references.add(references);
 	}
 
-	public void addInterview(Interview interview)
-	{
-		/*
-		 * Before adding check whether the interview time clashes
-		 * with other interview objects in the interview list
-		 */
-		this.interviewList.add(interview);
-	}
 
 	public void viewInterview()
 	{
-		if(interviewList.isEmpty())
+		if(applicationList.isEmpty())
 		{
-			System.out.println("You have no interviews scheduled");
+			System.out.println("No applications yet. After receiving applications you can view the scheduled interviews here");
 		}
-		for(Interview iw : interviewList)
+
+		else
 		{
-			System.out.println(iw);
+			List<JobApplication> appWithInterview = new ArrayList<>();
+			for(String jobID : applicationList.keySet())
+			{
+				JobApplication application = applicationList.get(jobID);
+				if(application.interviewScheduled())
+					appWithInterview.add(application);
+
+			}
+
+			if(appWithInterview.isEmpty())
+			{
+				System.out.println("You haven't scheduled interview for any applications");
+			}
+			else
+			{
+				for(JobApplication application : appWithInterview)
+				{
+					System.out.println("Interview for " + application.getJobID() + " at " + application.getInterviewTime());
+				}
+			}
+		}
+
+	}
+
+	public void scheduleInterview()
+	{
+		if(applicationList.isEmpty())
+		{
+			System.out.println("No applications received yet. When you receive applications you can set the interview time slot here");
+		}
+
+		else
+		{
+			Scanner scan = new Scanner(System.in);
+			System.out.println("*********Showing applications which dont have an interview scheduled****************");
+			for(String jobID : applicationList.keySet())
+			{
+				JobApplication application = applicationList.get(jobID);
+
+				if(!application.interviewScheduled())
+				{
+					System.out.println(application);
+				}
+			}
+
+			System.out.print("****************Select a job iD for which you want to schedule an interview***************");
+			String jobID = scan.next();
+
+			System.out.println("Please choose a timeslot between");
+
+			applicationList.get(jobID).showInterviewTimeSlot();
+
+			boolean rightTime = false;
+			System.out.print("Enter desired interview time in yyyy-MMM-dd HH:mm format ");
+			scan.nextLine();
+			do {
+
+				String interviewTime = scan.nextLine();
+
+				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MMM-dd HH:mm");
+				LocalDateTime interview = LocalDateTime.parse(interviewTime, formatter);
+
+				if(applicationList.get(jobID).validateInterviewTime(interview))
+				{
+					applicationList.get(jobID).setInterviewTime(interview);
+
+					System.out.println("*****Your interview time has been set***********");
+					rightTime = true;
+				}
+				else
+				{
+					System.out.println("Please select a timeslot in between the mentioned timings");
+				}
+
+			}while(!rightTime);
+
 		}
 	}
 

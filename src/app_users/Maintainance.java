@@ -7,15 +7,15 @@ import app_exceptions.*;
 import app_items.Blacklist;
 import app_items.JobCategory;
 
-public class Maintainance extends User {
+public class Maintainance extends GlobalUser {
 	
 	Blacklist blacklist = new Blacklist();
 	
 	UserDatabase userDB = new UserDatabase();
 	
-	public Maintainance(String username, String password)
+	public Maintainance(String username, String password, String emailID)
 	{
-		super(username,password);
+		super(username,password, emailID);
 	}
 	
 	public void getApplicantRecords() {
@@ -55,7 +55,7 @@ public class Maintainance extends User {
 		//add the show profile functionality here
 	}
 	
-	public void removeProvisionalBlacklist(User user) throws UserNotPresentException {
+	public void removeProvisionalBlacklist(EndUser user) throws UserNotPresentException {
 
 		if(!blacklist.getProvisionallyBlacklistedUserList().containsKey(user.getUsername()))
 		{
@@ -69,7 +69,7 @@ public class Maintainance extends User {
 
 	}
 		
-	public void removeFullyBlacklist(User user) throws UserNotPresentException, CannotReactivateUserException {
+	public void removeFullyBlacklist(EndUser user) throws UserNotPresentException, CannotReactivateUserException {
 
 		if(!blacklist.getFullyBlacklistedUserList().containsKey(user.getUsername()))
 		{
@@ -88,7 +88,7 @@ public class Maintainance extends User {
 
 	}
 
-	public void fullyBlacklistUser(User user) throws CannotFullyBlacklistException
+	public void fullyBlacklistUser(EndUser user) throws CannotFullyBlacklistException
 	{
 		user.setProvisionallyBlacklistStatus(false);
 		user.setFullyBlacklistStatus(true);
@@ -99,7 +99,7 @@ public class Maintainance extends User {
 
 	public void addJobCategory(String categoryName) throws DuplicateCategoryException
 	{
-		JobCategory newCategory = new JobCategory(categoryName);
+		JobCategory.getInstance().addJobCategory(categoryName);
 	}
 }
 

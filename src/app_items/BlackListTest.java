@@ -22,13 +22,13 @@ import java.util.List;
 public class BlackListTest {
 
     private static UserDatabase userDB = new UserDatabase();
-    static Applicant app1 = new Applicant("app1", "abc123", "nachi", "1234", false, true);
-    static Applicant app2 = new Applicant("app2", "abc123", "anurag", "1234", true, true);
-    static Applicant app3 = new Applicant("app3", "abc123", "joel", "1234", false, true);
+    static Applicant app1 = new Applicant("app1", "abc123", "app1@gmail.com" , "nachi", "1234", false, true);
+    static Applicant app2 = new Applicant("app2", "abc123","app2@gmail.com" , "anurag", "1234", true, true);
+    static Applicant app3 = new Applicant("app3", "abc123","app3@gmail.com" , "joel", "1234", false, true);
 
     static Employer emp1 = new Employer("emp1", "abc123", "google", "google.com", "1234", "test");
     static Employer emp2 = new Employer("emp2", "abc123", "amazon", "amazon.com", "1234", "test");
-    static Maintainance staff1 = new Maintainance("staff1", "abc123");
+    static Maintainance staff1 = new Maintainance("staff1", "abc123","staff1@gmail.com");
 
     @BeforeClass
     public static void setUpBeforeClass() throws Exception

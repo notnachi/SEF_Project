@@ -1,5 +1,8 @@
 package dashboard;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.util.*;
 
 import app_exceptions.DuplicateCategoryException;
@@ -7,6 +10,7 @@ import app_exceptions.InvalidAccessRightsException;
 import app_exceptions.InvalidComplaintHierarchyException;
 import app_exceptions.UserAlreadyBlacklistedException;
 import app_users.Applicant;
+import app_users.EndUser;
 import app_users.UserDatabase;
 
 public class ApplicantDashboard {
@@ -18,8 +22,7 @@ public class ApplicantDashboard {
 		this.user = user;
 	}
 	
-	public void displayMainMenu()
-	{
+	public void displayMainMenu() throws FileNotFoundException {
 		if(user.checkOffer() != null)
 		{
 			System.out.println("***************YOU HAVE RECEIVED AN OFFER****************");
@@ -45,6 +48,12 @@ public class ApplicantDashboard {
 						UpdateProfileMenu updateProfile = this.getUpdateProfileOption();
 						switch(updateProfile)
 						{
+							case UploadCV:
+								System.out.println("Enter file path of your cv");
+								String filePath = scan.next();
+								File cv = new File(filePath);
+								user.setCv(cv);
+								break;
 							case AddAvailability:
 								try {
 									user.addAvailability();
@@ -84,7 +93,10 @@ public class ApplicantDashboard {
 					}while(!exitSubMenu.equalsIgnoreCase("n"));
 
 					break;
-				case ViewInterviews:
+				case ScheduleInterview:
+					user.scheduleInterview();
+					break;
+				case ViewInterview:
 					user.viewInterview();
 					break;
 				case RespondToOffer:
@@ -100,7 +112,7 @@ public class ApplicantDashboard {
 					System.out.print("Enter your complaint ");
 					String complaintDesc = scan.next();
 					try {
-						user.sendComplaint(UserDatabase.fetchUser(complaintAbout), complaintDesc);
+						user.sendComplaint((EndUser) UserDatabase.fetchUser(complaintAbout), complaintDesc);
 					} catch (NullPointerException e) {
 						System.err.println("Invalid username");
 					} catch (InvalidComplaintHierarchyException e) {
@@ -129,7 +141,8 @@ public class ApplicantDashboard {
 
 		ViewProfile,
 		EditProfile,
-		ViewInterviews,
+		ScheduleInterview,
+		ViewInterview,
 		RespondToOffer,
 		SendComplaint,
 		Exit
@@ -145,10 +158,11 @@ public class ApplicantDashboard {
 		System.out.println("************Menu************");
 		System.out.println("1. View Profile\n"
 						 + "2. Edit Profile\n"
-						 + "3. View Scheduled Interviews\n"
-						 + "4. Respond to Offer\n"
-						 + "5. Send complaint\n"
-						 + "6. Exit");
+						 + "3. Schedule an Interview\n"
+						 + "4. View Scheduled Interviews\n"
+						 + "5. Respond to Offer\n"
+						 + "6. Send complaint\n"
+						 + "7. Exit");
 
 		do
 		{
@@ -161,7 +175,7 @@ public class ApplicantDashboard {
 
 				//System.out.println("This is choice in get response " + choice);
 
-				if(userResponse >= 0 && userResponse < 6)
+				if(userResponse >= 0 && userResponse < 7)
 				{
 					runAgain = false;
 				}
@@ -186,6 +200,7 @@ public class ApplicantDashboard {
 //
 	private enum UpdateProfileMenu {
 
+		UploadCV,
 		AddAvailability,
 		AddEmploymentRecords,
 		AddQualifications,
@@ -201,11 +216,12 @@ public class ApplicantDashboard {
 		UpdateProfileMenu choice = null;
 
 		System.out.println("************Menu************");
-		System.out.println( "1. Add Availability\n"
-						 + "2. Add Employment Record\n"
-						 + "3. Add Qualification\n"
-						 + "4. Add References\n"
-						 + "5. Go Back");
+		System.out.println( "1. Upload CV"
+						 + "2. Add Availability\n"
+						 + "3. Add Employment Record\n"
+						 + "4. Add Qualification\n"
+						 + "5. Add References\n"
+						 + "6. Go Back");
 
 		do
 		{
@@ -218,7 +234,7 @@ public class ApplicantDashboard {
 
 				//System.out.println("This is choice in get response " + choice);
 
-				if(userResponse >= 0 && userResponse < 5)
+				if(userResponse >= 0 && userResponse < 6)
 				{
 					runAgain = false;
 				}

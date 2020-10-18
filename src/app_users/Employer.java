@@ -1,6 +1,7 @@
 package app_users;
 import app_exceptions.*;
 import app_items.*;
+import main.EmailHelper;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -9,22 +10,19 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class Employer extends User {
+public class Employer extends EndUser {
 	
 	private String employerName;
-	private String emailID;
 	private String contactNumber;
 	private String aboutEmployer;
 	
 	private HashMap<String, Job> jobList = new HashMap<>();
-	private ArrayList<Interview> interviewList = new ArrayList<Interview>();
 
 	
 	public Employer(String username, String password, String empName, String emailID, String contactNumber, String empDesc) {
 		
-		super(username,password);
+		super(username,password, emailID);
 		this.employerName = empName;
-		this.emailID = emailID;
 		this.contactNumber = contactNumber;
 		this.aboutEmployer = empDesc;
 
@@ -37,7 +35,7 @@ public class Employer extends User {
 			throw new InvalidAccessRightsException("Cannot perform operation. You are fully Blacklisted");
 		}
 		System.out.println("Name " + this.employerName);
-		System.out.println("Email " + this.emailID);
+		System.out.println("Email " + super.getEmailID());
 		System.out.println("Contact " + this.contactNumber);
 		System.out.println("About " + this.aboutEmployer);
 	}
@@ -47,23 +45,6 @@ public class Employer extends User {
 		return jobList.get(jobID);
 	}
 
-	public void showInterview()
-	{
-		if(interviewList.isEmpty())
-		{
-			System.out.println("No interviews scheduled");
-		}
-		else
-		{
-			for(Interview iw : interviewList)
-			{
-				System.out.println(iw);
-			}
-		}
-
-	}
-
-	
 
 	public void createJob(boolean internationalApply,
 						  String jobType,
@@ -77,7 +58,7 @@ public class Employer extends User {
 		}
 
 		Job newJob = new Job(this, internationalApply, jobType, workingHours, jobCategory, licenseRequired, minYearsOfExperience);
-		System.out.println(newJob.getJobID());
+//		System.out.println(newJob.getJobID());
 		this.jobList.put(newJob.getJobID(), newJob);
 
 	}
@@ -91,7 +72,8 @@ public class Employer extends User {
 		Scanner scan = new Scanner(System.in);
 
 		boolean internationalApply;
-		String jobType;
+		int jobTypeNumber;
+		String jobType = null;
 		double workingHours;
 		String jobCategory;
 		boolean licenseRequired;
@@ -107,14 +89,42 @@ public class Employer extends User {
 			internationalApply = false;
 		}
 
-		System.out.print("Enter the job type ");
-		jobType =  scan.next();
+		System.out.println("Job Types Available -\n 1. Part-Time\n2. Full-Time\n3.Internship\n");
+		System.out.print("Enter your choice 1-3 ");
+		do {
+			jobTypeNumber = scan.nextInt();
+
+			if(jobTypeNumber == 1)
+			{
+				jobType = "PART-TIME";
+			}
+			else if(jobTypeNumber == 2)
+			{
+				jobType = "FULL-TIME";
+			}
+			else if(jobTypeNumber == 1)
+			{
+				jobType = "INTERNSHIP";
+			}
+			else
+			{
+				System.out.println("Please enter a number from 1 to 3");
+			}
+		}while(jobTypeNumber<1 || jobTypeNumber > 3);
 
 		System.out.print("Enter number of working hours ");
 		workingHours =  Double.parseDouble(scan.next());
 
-		System.out.print("Enter the job category ");
-		jobCategory =  scan.next();
+		System.out.println("****Showing all job categories******");
+
+		JobCategory jc = JobCategory.getInstance();
+
+		jc.showAllCategories();
+
+		System.out.println("Enter the job category");
+		String categoryID = scan.next();
+
+		jobCategory = jc.getJobCategory(categoryID);
 
 		System.out.print("Is a driving license required? Press Y for yes and N for no ");
 		String licenseResponse =  scan.next();
@@ -132,6 +142,8 @@ public class Employer extends User {
 		Job newJob = new Job(this, internationalApply, jobType, workingHours, jobCategory, licenseRequired, minYearsOfExperience);
 		System.out.println(newJob.getJobID());
 		this.jobList.put(newJob.getJobID(), newJob);
+
+		System.out.println("**********JOB CREATED SUCCESSFULLY**********");
 
 	}
 
@@ -212,7 +224,18 @@ public class Employer extends User {
 					//send applicant a job application
 					app.receiveJobApplication(job, application);
 
+					String mailSubject = super.getUsername() + " has shortlisted you for a job";
+
+					StringBuilder mailMessage = new StringBuilder();
+					mailMessage.append("Here are the job details " + job + "\n");
+					mailMessage.append("Employer is available from " + startDateTime + " to " + endDateTime + "\n");
+					mailMessage.append("Please select your interview time slot");
+
+					EmailHelper newEmail = new EmailHelper(app.getEmailID(),super.getEmailID(),mailSubject,mailMessage.toString());
+					newEmail.sendEmail();
 				}
+
+				System.out.println("Application sent to the ranked applicants. To finalize applicants please select record result option");
 			}
 			catch(Exception e)
 			{

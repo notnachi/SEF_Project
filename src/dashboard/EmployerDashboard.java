@@ -7,6 +7,7 @@ import app_exceptions.InvalidComplaintHierarchyException;
 import app_exceptions.UserAlreadyBlacklistedException;
 import app_items.Job;
 import app_users.Employer;
+import app_users.EndUser;
 import app_users.UserDatabase;
 
 public class EmployerDashboard {
@@ -25,7 +26,6 @@ public class EmployerDashboard {
 		CreateJob,
 		ViewJobs,
 		ShortlistApplicant,
-		ViewInterviews,
 		RecordResult,
 		SendComplaint,
 		Exit
@@ -69,9 +69,6 @@ public class EmployerDashboard {
 					System.err.println(e1.getMessage());;
 				}
 					break;
-				case ViewInterviews:
-					user.showInterview();
-					break;
 				case RecordResult:
 					if(user.getProvisionallyBlacklistStatus())
 					{
@@ -99,12 +96,12 @@ public class EmployerDashboard {
 					}
 					else
 					{
-						System.out.print("Enter username of applicant ");
+						System.out.print("Enter username of applicant");
 						String complaintAbout = scan.next();
 						System.out.print("Enter your complaint ");
 						String complaintDesc = scan.next();
 						try {
-							user.sendComplaint(UserDatabase.fetchUser(complaintAbout), complaintDesc);
+							user.sendComplaint((EndUser) UserDatabase.fetchUser(complaintAbout), complaintDesc);
 						} catch (NullPointerException e) {
 							System.err.println("Invalid username");
 						} catch (InvalidComplaintHierarchyException e) {
@@ -116,7 +113,6 @@ public class EmployerDashboard {
 							System.err.println(e.getMessage());
 						}
 					}
-
 					break;
 				case Exit:
 					System.out.print("Exit Prog? Press any key for no & Y for yes ");
@@ -139,10 +135,9 @@ public class EmployerDashboard {
 						 + "3. Create Job\n"
 						 + "4. View Jobs\n"
 						 + "5. Shortlist Candidate\n"
-						 + "6. View Interviews\n"
-						 + "7. Record Result\n"
-						 + "8. Send Complaint\n"
-						 + "9. Exit");
+						 + "6. Record Result\n"
+						 + "7. Send Complaint\n"
+						 + "8. Exit");
 
 		do
 		{
@@ -155,7 +150,7 @@ public class EmployerDashboard {
 
 				//System.out.println("This is choice in get response " + choice);
 
-				if(userResponse >= 0 && userResponse < 9)
+				if(userResponse >= 0 && userResponse < 8)
 				{
 					runAgain = false;
 				}

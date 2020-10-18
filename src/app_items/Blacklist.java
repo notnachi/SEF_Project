@@ -1,24 +1,22 @@
 package app_items;
 
-import java.time.LocalDateTime;
 import java.util.*;
 
 import app_exceptions.CannotFullyBlacklistException;
-import app_exceptions.CannotReactivateUserException;
-import app_exceptions.UserNotPresentException;
-import app_users.User;
+import app_users.EndUser;
+import app_users.GlobalUser;
 
 public class Blacklist {
 	
-	private static HashMap <String, User> provisionalBlacklistedUsers = new HashMap<>();
-	private static HashMap <String, User> fullyBlacklistedUsers = new HashMap<>();
+	private static HashMap <String, EndUser> provisionalBlacklistedUsers = new HashMap<>();
+	private static HashMap <String, EndUser> fullyBlacklistedUsers = new HashMap<>();
 	
-	public void provisionallyBlacklist(User user)
+	public void provisionallyBlacklist(EndUser user)
 	{
 		this.provisionalBlacklistedUsers.put(user.getUsername(), user);
 	}
 
-	public void fullyBlacklist(User user) throws CannotFullyBlacklistException
+	public void fullyBlacklist(EndUser user) throws CannotFullyBlacklistException
 	{
 		//first verify that the user has been provisionally blacklisted
 		if(this.provisionalBlacklistedUsers.get(user.getUsername()) == null)
@@ -42,12 +40,12 @@ public class Blacklist {
 		this.fullyBlacklistedUsers.remove(username);
 	}
 	
-	public static HashMap<String, User> getProvisionallyBlacklistedUserList()
+	public static HashMap<String, EndUser> getProvisionallyBlacklistedUserList()
 	{
 		return provisionalBlacklistedUsers;
 	}
 	
-	public static HashMap<String, User> getFullyBlacklistedUserList()
+	public static HashMap<String, EndUser> getFullyBlacklistedUserList()
 	{
 		return fullyBlacklistedUsers;
 	}

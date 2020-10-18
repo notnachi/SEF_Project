@@ -24,6 +24,9 @@ public class Registration_Dashboard {
 		
 		System.out.print("Enter password ");
 		String password = scan.nextLine();
+
+		System.out.print("Enter Email ID ");
+		String email = scan.nextLine();
 		
 		System.out.print("Enter name ");
 		String name = scan.nextLine();
@@ -55,7 +58,7 @@ public class Registration_Dashboard {
 			hasLicense = false;
 		}
 		
-		this.userDB.addUsers(username, new Applicant(username, password, name, contact, isInternational, hasLicense));
+		this.userDB.addUsers(username, new Applicant(username, password, email, name, contact, isInternational, hasLicense));
 		
 //		System.out.println("Is this user an instance of applicant" + (userDB.fetchUser(username) instanceof Applicant));
 	}
@@ -93,9 +96,12 @@ public class Registration_Dashboard {
 		
 		System.out.print("Enter password ");
 		String password = scan.nextLine();
+
+		System.out.print("Enter Email ");
+		String email = scan.nextLine();
 		
 		
-		this.userDB.addUsers(username, new Maintainance(username, password));
+		this.userDB.addUsers(username, new Maintainance(username, password, email));
 		
 	}
 }

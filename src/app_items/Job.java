@@ -45,10 +45,6 @@ public class Job{
 
 	private HashMap<String, Applicant> shortlistedApplicantList;
 
-	//store the list of final and rejected applicants
-	private Result jobResult;
-
-	private ArrayList<Offer> offerList;
 	
 	//job available or not
 	private boolean jobAvailable;
@@ -74,9 +70,6 @@ public class Job{
 
 		this.applicationList = new HashMap<>();
 		this.shortlistedApplicantList = new HashMap<>();
-
-		this.jobResult = new Result();
-		this.offerList = new ArrayList<>();
 
 		jobCount+=1;
 
@@ -118,13 +111,20 @@ public class Job{
 		return rankedList;
 	}
 
+	public LocalDateTime getStartingTimeSlot()
+	{
+		return startingTimeSlot;
+	}
+
+	public LocalDateTime getEndingTimeSlot()
+	{
+		return endingTimeSlot;
+	}
+
 	public HashMap<String, Applicant> getShortlistedApplicantList() {
 		return shortlistedApplicantList;
 	}
 
-	public void setJobResult(Result jobResult) {
-		this.jobResult = jobResult;
-	}
 
 	public String getJobID() {
 		return jobID;
@@ -136,6 +136,11 @@ public class Job{
 
 	public String getJobType() {
 		return jobType;
+	}
+
+	public String getJobCategory()
+	{
+		return jobCategory;
 	}
 
 	public double getWorkingHours() {
@@ -166,9 +171,6 @@ public class Job{
 		}
 	}
 
-	public void setOfferList(ArrayList<Offer> offerList) {
-		this.offerList = offerList;
-	}
 
 	@Override
 	public String toString() {

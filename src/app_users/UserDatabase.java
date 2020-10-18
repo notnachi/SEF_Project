@@ -1,17 +1,12 @@
 package app_users;
 
-import java.applet.AppletContext;
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.*;
 
 import app_exceptions.InvalidPasswordException;
 
 public class UserDatabase {
 	
-	public static HashMap<String,User> userData = new HashMap<>();
+	public static HashMap<String, GlobalUser> userData = new HashMap<>();
 
 	
 	public UserDatabase()
@@ -19,17 +14,17 @@ public class UserDatabase {
 		
 	}
 	
-	public HashMap<String,User> getUserData()
+	public HashMap<String, GlobalUser> getUserData()
 	{
 		return this.userData;
 	}
 	
-	public void addUsers(String username, User user)
+	public void addUsers(String username, GlobalUser user)
 	{
 		this.userData.put(username, user);
 	}
 	
-	public static User fetchUser(String username)
+	public static GlobalUser fetchUser(String username)
 	{
 		return userData.get(username);
 	}

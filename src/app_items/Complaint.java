@@ -1,14 +1,15 @@
 package app_items;
 
-import app_users.User;
+import app_users.EndUser;
+import app_users.GlobalUser;
 
 public class Complaint {
 	
-	private User complaintBy;
-	private User complaintAbout;
+	private EndUser complaintBy;
+	private EndUser complaintAbout;
 	private String complaintDesc;
 	
-	public Complaint(User complaintBy, User complaintAbout, String complaintDesc)
+	public Complaint(EndUser complaintBy, EndUser complaintAbout, String complaintDesc)
 	{
 		this.complaintBy = complaintBy;
 		this.complaintAbout = complaintAbout;

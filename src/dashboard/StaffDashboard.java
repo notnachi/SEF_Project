@@ -4,10 +4,13 @@ import java.util.Scanner;
 
 import app_exceptions.CannotFullyBlacklistException;
 import app_exceptions.CannotReactivateUserException;
+import app_exceptions.DuplicateCategoryException;
 import app_exceptions.UserNotPresentException;
 import app_items.Blacklist;
+import app_users.EndUser;
 import app_users.Maintainance;
 import app_users.UserDatabase;
+import jdk.jfr.Category;
 
 
 public class StaffDashboard  {
@@ -21,8 +24,7 @@ public class StaffDashboard  {
 //
 
 //
-	public void displayMainMenu()
-	{
+	public void displayMainMenu() {
 		String exitProg = "n";
 		do
 		{
@@ -48,7 +50,7 @@ public class StaffDashboard  {
                         System.out.print("Enter username of user to remove from provisionally blacklist");
                         String restoreUser = scan.next();
                         try {
-                            user.removeProvisionalBlacklist(UserDatabase.fetchUser(restoreUser));
+                            user.removeProvisionalBlacklist((EndUser) UserDatabase.fetchUser(restoreUser));
                         } catch (UserNotPresentException e) {
                             System.err.println(e.getMessage());
                         }
@@ -67,7 +69,7 @@ public class StaffDashboard  {
                         System.out.print("Enter username of user to fully blacklist  ");
                         String fullyBlacklistUser = scan.next();
                         try {
-                            user.fullyBlacklistUser(UserDatabase.fetchUser(fullyBlacklistUser));
+                            user.fullyBlacklistUser((EndUser) UserDatabase.fetchUser(fullyBlacklistUser));
                         } catch (CannotFullyBlacklistException e) {
                             System.out.println(e.getMessage());
                         }
@@ -86,13 +88,25 @@ public class StaffDashboard  {
                         System.out.print("Enter username of user to remove from fully blacklist  ");
                         String newUser = scan.next();
                         try {
-                            user.removeFullyBlacklist(UserDatabase.fetchUser(newUser));
+                            user.removeFullyBlacklist((EndUser) UserDatabase.fetchUser(newUser));
                         } catch (CannotReactivateUserException | UserNotPresentException e) {
                             System.out.println(e.getMessage());
                         }
                     }
                     break;
 				case AddJobCategories:
+					System.out.print ("Please enter new job category ");
+					boolean noError = false;
+					do {
+						String category = scan.next();
+						try {
+							user.addJobCategory(category);
+							noError = true;
+							System.out.println("Category added successfully");
+						} catch (DuplicateCategoryException e) {
+							System.out.print("Category already present. Please enter different Category ");
+						}
+					}while(!noError);
 					break;
 				case Exit:
 					System.out.print("Exit Prog? Press any key for no & Y for yes ");
@@ -127,7 +141,7 @@ public class StaffDashboard  {
 						 + "2. View Employer Records\n"
 						 + "3. Remove from Provisional Blacklist\n"
 						 + "4. Add to fully blacklist\n"
-                         + "5. Remove from fully blacklist"
+                         + "5. Remove from fully blacklist\n"
 						 + "6. Add job categories\n"
 						 + "7. Exit");
 
